@@ -184,7 +184,9 @@
 		B5228389152F32410025AB02 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = EMK;
 				LastUpgradeCheck = 0430;
+				ORGANIZATIONNAME = "Benedict Cohen";
 			};
 			buildConfigurationList = B522838C152F32410025AB02 /* Build configuration list for PBXProject "RON" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -377,6 +379,7 @@
 				B582B5A615342E0800E255B0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

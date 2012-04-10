@@ -3,7 +3,7 @@
 //  RONTest
 //
 //  Created by Benedict Cohen on 10/04/2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 Benedict Cohen. All rights reserved.
 //
 
 #import "RONTest.h"
@@ -16,12 +16,16 @@
     // Set-up code here.
 }
 
+
+
 - (void)tearDown
 {
     // Tear-down code here.
     
     [super tearDown];
 }
+
+
 
 - (void)testJSONCorpus
 {
@@ -32,6 +36,8 @@
     for (NSString *jsonFilename in corpusFilenames)
     {
         if (![[jsonFilename pathExtension] isEqualToString:@"json"]) continue;
+        
+        //TODO:
     }    
 }
 

@@ -1,0 +1,384 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B5228397152F32420025AB02 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5228396152F32420025AB02 /* Foundation.framework */; };
+		B582B59415342E0800E255B0 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B582B59315342E0800E255B0 /* SenTestingKit.framework */; };
+		B582B5A015342E0800E255B0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B582B59E15342E0800E255B0 /* InfoPlist.strings */; };
+		B582B5A315342E0800E255B0 /* RONTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B582B5A215342E0800E255B0 /* RONTest.m */; };
+		B582B5AE15342EB200E255B0 /* EMKRONSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = B582B5AB15342EB200E255B0 /* EMKRONSerialization.m */; };
+		B582B5AF15342EB200E255B0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B582B5AD15342EB200E255B0 /* main.m */; };
+		B582B5B015342F6C00E255B0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5228396152F32420025AB02 /* Foundation.framework */; };
+		B582B5B115342FD000E255B0 /* EMKRONSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = B582B5AB15342EB200E255B0 /* EMKRONSerialization.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B5228390152F32420025AB02 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		B5228392152F32420025AB02 /* RON */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RON; sourceTree = BUILT_PRODUCTS_DIR; };
+		B5228396152F32420025AB02 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		B582B59215342E0800E255B0 /* RONTest.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RONTest.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B582B59315342E0800E255B0 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		B582B59D15342E0800E255B0 /* RONTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RONTest-Info.plist"; sourceTree = "<group>"; };
+		B582B59F15342E0800E255B0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B582B5A115342E0800E255B0 /* RONTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RONTest.h; sourceTree = "<group>"; };
+		B582B5A215342E0800E255B0 /* RONTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RONTest.m; sourceTree = "<group>"; };
+		B582B5A415342E0800E255B0 /* RONTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RONTest-Prefix.pch"; sourceTree = "<group>"; };
+		B582B5AA15342EB200E255B0 /* EMKRONSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMKRONSerialization.h; sourceTree = "<group>"; };
+		B582B5AB15342EB200E255B0 /* EMKRONSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMKRONSerialization.m; sourceTree = "<group>"; };
+		B582B5AD15342EB200E255B0 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B582B5B215342FFC00E255B0 /* about.ron.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = about.ron.txt; sourceTree = "<group>"; };
+		B582B5B315342FFC00E255B0 /* Grammer.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Grammer.txt; sourceTree = "<group>"; };
+		B582B5B415342FFD00E255B0 /* license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = license.txt; sourceTree = "<group>"; };
+		B582B5B51534301800E255B0 /* JSON test corpus */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "JSON test corpus"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B522838F152F32420025AB02 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B5228397152F32420025AB02 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B582B58E15342E0800E255B0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B582B5B015342F6C00E255B0 /* Foundation.framework in Frameworks */,
+				B582B59415342E0800E255B0 /* SenTestingKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B5228387152F32410025AB02 = {
+			isa = PBXGroup;
+			children = (
+				B582B5A915342EB200E255B0 /* EMKRONSerialization */,
+				B582B5AC15342EB200E255B0 /* ron */,
+				B582B59B15342E0800E255B0 /* RONTest */,
+				B5228393152F32420025AB02 /* Products */,
+				B582B5B215342FFC00E255B0 /* about.ron.txt */,
+				B582B5B315342FFC00E255B0 /* Grammer.txt */,
+				B582B5B415342FFD00E255B0 /* license.txt */,
+			);
+			sourceTree = "<group>";
+		};
+		B5228393152F32420025AB02 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B5228392152F32420025AB02 /* RON */,
+				B582B59215342E0800E255B0 /* RONTest.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B5228395152F32420025AB02 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B582B59315342E0800E255B0 /* SenTestingKit.framework */,
+			);
+			name = Frameworks;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		B582B59B15342E0800E255B0 /* RONTest */ = {
+			isa = PBXGroup;
+			children = (
+				B582B5A115342E0800E255B0 /* RONTest.h */,
+				B582B5A215342E0800E255B0 /* RONTest.m */,
+				B582B5B51534301800E255B0 /* JSON test corpus */,
+				B5228395152F32420025AB02 /* Frameworks */,
+				B582B59C15342E0800E255B0 /* Supporting Files */,
+			);
+			path = RONTest;
+			sourceTree = "<group>";
+		};
+		B582B59C15342E0800E255B0 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B582B59D15342E0800E255B0 /* RONTest-Info.plist */,
+				B582B59E15342E0800E255B0 /* InfoPlist.strings */,
+				B582B5A415342E0800E255B0 /* RONTest-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B582B5A915342EB200E255B0 /* EMKRONSerialization */ = {
+			isa = PBXGroup;
+			children = (
+				B582B5AA15342EB200E255B0 /* EMKRONSerialization.h */,
+				B582B5AB15342EB200E255B0 /* EMKRONSerialization.m */,
+			);
+			path = EMKRONSerialization;
+			sourceTree = "<group>";
+		};
+		B582B5AC15342EB200E255B0 /* ron */ = {
+			isa = PBXGroup;
+			children = (
+				B582B5AD15342EB200E255B0 /* main.m */,
+				B5228396152F32420025AB02 /* Foundation.framework */,
+			);
+			path = ron;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B5228391152F32420025AB02 /* ron */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B52283A1152F32420025AB02 /* Build configuration list for PBXNativeTarget "ron" */;
+			buildPhases = (
+				B522838E152F32420025AB02 /* Sources */,
+				B522838F152F32420025AB02 /* Frameworks */,
+				B5228390152F32420025AB02 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ron;
+			productName = Benson;
+			productReference = B5228392152F32420025AB02 /* RON */;
+			productType = "com.apple.product-type.tool";
+		};
+		B582B59115342E0800E255B0 /* RONTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B582B5A715342E0800E255B0 /* Build configuration list for PBXNativeTarget "RONTest" */;
+			buildPhases = (
+				B582B58D15342E0800E255B0 /* Sources */,
+				B582B58E15342E0800E255B0 /* Frameworks */,
+				B582B58F15342E0800E255B0 /* Resources */,
+				B582B59015342E0800E255B0 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RONTest;
+			productName = RONTest;
+			productReference = B582B59215342E0800E255B0 /* RONTest.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B5228389152F32410025AB02 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+			};
+			buildConfigurationList = B522838C152F32410025AB02 /* Build configuration list for PBXProject "RON" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = B5228387152F32410025AB02;
+			productRefGroup = B5228393152F32420025AB02 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B5228391152F32420025AB02 /* ron */,
+				B582B59115342E0800E255B0 /* RONTest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B582B58F15342E0800E255B0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B582B5A015342E0800E255B0 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		B582B59015342E0800E255B0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B522838E152F32420025AB02 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B582B5AE15342EB200E255B0 /* EMKRONSerialization.m in Sources */,
+				B582B5AF15342EB200E255B0 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B582B58D15342E0800E255B0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B582B5A315342E0800E255B0 /* RONTest.m in Sources */,
+				B582B5B115342FD000E255B0 /* EMKRONSerialization.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		B582B59E15342E0800E255B0 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B582B59F15342E0800E255B0 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		B522839F152F32420025AB02 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		B52283A0152F32420025AB02 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		B52283A2152F32420025AB02 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RON;
+			};
+			name = Debug;
+		};
+		B52283A3152F32420025AB02 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RON;
+			};
+			name = Release;
+		};
+		B582B5A515342E0800E255B0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RONTest/RONTest-Prefix.pch";
+				INFOPLIST_FILE = "RONTest/RONTest-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		B582B5A615342E0800E255B0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RONTest/RONTest-Prefix.pch";
+				INFOPLIST_FILE = "RONTest/RONTest-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B522838C152F32410025AB02 /* Build configuration list for PBXProject "RON" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B522839F152F32420025AB02 /* Debug */,
+				B52283A0152F32420025AB02 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B52283A1152F32420025AB02 /* Build configuration list for PBXNativeTarget "ron" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B52283A2152F32420025AB02 /* Debug */,
+				B52283A3152F32420025AB02 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B582B5A715342E0800E255B0 /* Build configuration list for PBXNativeTarget "RONTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B582B5A515342E0800E255B0 /* Debug */,
+				B582B5A615342E0800E255B0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B5228389152F32410025AB02 /* Project object */;
+}

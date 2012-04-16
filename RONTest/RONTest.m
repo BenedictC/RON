@@ -8,6 +8,8 @@
 
 #import "RONTest.h"
 
+#import "EMKRONSerialization.h"
+
 @implementation RONTest
 
 - (void)setUp
@@ -36,8 +38,21 @@
     for (NSString *jsonFilename in corpusFilenames)
     {
         if (![[jsonFilename pathExtension] isEqualToString:@"json"]) continue;
+    
         
-        //TODO:
+if (![jsonFilename isEqualToString:@"products.json"])  continue;
+        
+        
+        NSLog(@"Testing %@", jsonFilename);
+        NSString *path = [corpusPath stringByAppendingPathComponent:jsonFilename];
+        
+        NSData *jsonData = [NSData dataWithContentsOfFile:path];
+        id jsonObjects = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:NULL];
+        
+        NSData *ronData = [EMKRONSerialization dataWithRONObject:jsonObjects options:0 error:NULL];
+        id ronObjects  = [EMKRONSerialization RONObjectWithData:ronData options:0 error:NULL];
+        
+        STAssertEqualObjects(jsonObjects, ronObjects, @"\n%@ failed", jsonFilename);        
     }    
 }
 

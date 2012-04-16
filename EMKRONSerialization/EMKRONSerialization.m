@@ -48,7 +48,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 +(id)RONObjectWithData:(NSData *)data options:(EMKRONSerializationOptions)options error:(NSError *__autoreleasing *)error;
 {
-    NSString *ron = [[NSString alloc] initWithData:data encoding:EMKRONReadingStrictMode];
+    NSString *ron = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     EMKRONParser *parser = [[EMKRONParser alloc] initWithRonString:ron parseMode:EMKRONReadingStrictMode];
     
     return [parser parse:error];
@@ -757,6 +757,15 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 
 
+#pragma mark append to data
+-(void)appendString:(NSString *)string
+{
+    NSLog(@"Appending string: %@", string);
+    [self.data appendData:[string dataUsingEncoding:NSUTF8StringEncoding]];
+}
+ 
+
+
 #pragma mark writing
 -(NSData *)write:(NSError *__autoreleasing *)error
 {
@@ -846,8 +855,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 {
     if (![object isKindOfClass:[NSDictionary class]]) return NO;
     
-    NSMutableData *data = self.data;
-    NSData *context = [[self context] dataUsingEncoding:NSUTF8StringEncoding];    
+    NSString *context = [self context];
     
     __block NSUInteger elementCount = 0;
     __block BOOL wasPreviousElementACollection = NO;    
@@ -855,13 +863,14 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     [object enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) 
     {
         //write context
-        [data appendData:context];
+        [self appendString:context];
         
         //write key
         [self writeString:key];
         
         //write split
-        [data appendData:[@":" dataUsingEncoding:NSUTF8StringEncoding]];
+        [self appendString:@":"];
+        
         
         //write value
         BOOL didWriteValue = [self writeScalar:value];
@@ -872,7 +881,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
         else
         {
             //we need an empty element to distinguish between this element and the last
-            if (wasPreviousElementACollection) [self.data appendData:context];
+            if (wasPreviousElementACollection) [self appendString:context];
             
             [self pushContext];
             didWriteValue = [self writeCollection:value];            
@@ -906,15 +915,14 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 {
     if (![array isKindOfClass:[NSArray class]]) return NO;
     
-    NSMutableData *data = self.data;
-    NSData *context = [[self context] dataUsingEncoding:NSUTF8StringEncoding];    
+    NSString *context = [self context];
     
     NSUInteger elementCount = 0;
     BOOL wasPreviousElementACollection = NO;    
     
     for (id value in array) 
     {
-        [data appendData:context];
+        [self appendString:context];
         
         BOOL didWriteValue = [self writeScalar:value];
         if (didWriteValue)
@@ -924,7 +932,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
         else
         {
             //we need an empty element to distinguish between this element and the last
-            if (wasPreviousElementACollection) [self.data appendData:context];
+            if (wasPreviousElementACollection) [self appendString:context];
             
             [self pushContext];
             didWriteValue = [self writeCollection:value];            
@@ -959,8 +967,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 {
     if (![number isKindOfClass:[NSNumber class]]) return NO;
     
-    NSString *string = [number description];
-    [self.data appendData:[string dataUsingEncoding:NSUTF8StringEncoding]];
+    [self appendString:[number description]];
     return YES;
 }
 
@@ -973,7 +980,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     //TODO: is this best way to determine if the value is a bool?
     if (number == [NSNumber numberWithBool:YES]) 
     {
-        [self.data appendData:[@"true" dataUsingEncoding:NSUTF8StringEncoding]];
+        [self appendString:@"true"];
         return YES;
     }
     
@@ -989,7 +996,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     //TODO: is this best way to determine if the value is a bool?
     if (number == [NSNumber numberWithBool:NO]) 
     {
-        [self.data appendData:[@"false" dataUsingEncoding:NSUTF8StringEncoding]];
+        [self appendString:@"false"];
         return YES;        
     }
     
@@ -1002,7 +1009,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 {
     if (![null isKindOfClass:[NSNull class]]) return NO;
     
-    [self.data appendData:[@"null" dataUsingEncoding:NSUTF8StringEncoding]];
+    [self appendString:@"null"];
     return YES;        
 }
 
@@ -1046,8 +1053,8 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
             
             if (!doesStringContainSubstringFromArray(delimiters))
             {
-                NSData *data = [[NSString stringWithFormat:@"%@%@%@", openComposedDelimiter, string, closeComposedDelimiter] dataUsingEncoding:NSUTF8StringEncoding];
-                [self.data appendData:data];
+                NSString *delimittedString = [NSString stringWithFormat:@"%@%@%@", openComposedDelimiter, string, closeComposedDelimiter];
+                [self appendString:delimittedString];
                 return YES;
             }
         }

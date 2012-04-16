@@ -13,14 +13,15 @@
 int main(int argc, const char * argv[])
 {
 
-    @autoreleasepool {
-            //TODO: read input and write output
-            //
-            //JSON -> RON
-            //RON  -> JSON
-        }
-        
-        
+    @autoreleasepool 
+    {
+        //TODO: 
+        // Implicition conversions
+        // JSON -> RON
+        // RON  -> JSON
+        //
+        // - Add switches for explict conversion
+        // - read input and write output        
     }
     return 0;
 }

@@ -1,0 +1,4 @@
+- Add =* to the grammar so that it can be used to underline words and create pseudo headings
+
+- Augment context terminator, -, with + to allow - in keys
+	- What does mark down use for lists items?

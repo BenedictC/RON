@@ -1,0 +1,18 @@
+Bugs
+====
+- Negative numbers in arrays (the minus symbol conflicts with the context)
+
+
+
+Features
+========
+- Improve debugging output with a line and char position
+
+
+
+Ideas (i.e. possible TODOs)
+===========================
+- Add =* to the grammar so that it can be used to underline words and create pseudo headings
+
+- Augment context terminator, -, with + to allow - in keys
+	- What does mark down use for lists items?

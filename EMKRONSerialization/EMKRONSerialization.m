@@ -884,7 +884,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
             wasPreviousElementACollection = NO;
         }
         else
-        {           
+        {   
             [self pushContext];
             didWriteValue = [self writeCollection:value];            
             if (didWriteValue) wasPreviousElementACollection = YES;            
@@ -909,6 +909,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     if (!didWriteFirstElement)
     {
         [self appendString:context];    
+        [self appendString:@":"];            
     }
     
     return YES;    
@@ -935,10 +936,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
             wasPreviousElementACollection = NO;
         }
         else
-        {
-            //we need an empty element to distinguish between this element and the last
-            if (wasPreviousElementACollection) [self appendString:context];
-            
+        {           
             [self pushContext];
             didWriteValue = [self writeCollection:value];            
             if (didWriteValue) wasPreviousElementACollection = YES;            
@@ -955,12 +953,12 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
         elementCount++;
     }
     
-//there has to be some artifact that this array existed!
-//    BOOL shouldWriteEmptyElement = (elementCount == 0);
-//    if (shouldWriteEmptyElement)
-//    {
-//        [self.data appendData:context];    
-//    }
+    //there has to be some artifact that this array existed!
+    BOOL didWriteFirstElement = elementCount > 0;
+    if (!didWriteFirstElement)
+    {
+        [self appendString:context];    
+    }
     
     return YES;    
 }

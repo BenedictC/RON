@@ -1,13 +1,16 @@
 Bugs
 ====
 - Negative numbers in arrays (the minus symbol conflicts with the context)
-
+	Solutions: 
+		- Use a * for context
+		- Change the grammar
 
 
 Features
 ========
 - Improve debugging output with a line and char position
-
+- Implement ron/main.m
+- Add parsing/writing options from NSJSONSerialization
 
 
 Ideas (i.e. possible TODOs)

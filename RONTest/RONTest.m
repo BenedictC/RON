@@ -49,7 +49,7 @@
 //        NSLog(@"\n%@",[NSString stringWithFormat:@"%s", [ronData bytes]]);
         id ronObjects  = [EMKRONSerialization RONObjectWithData:ronData options:0 error:NULL];
         
-        STAssertEqualObjects(jsonObjects, ronObjects, @"\n%@ failed", jsonFilename);        
+        STAssertEqualObjects(jsonObjects, ronObjects, @"%@ failed:\n%@", jsonFilename, [NSString stringWithFormat:@"%s", [ronData bytes]]);        
     }    
 }
 

@@ -12,6 +12,8 @@
 
 #pragma mark - Constants
 NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
+#define CONTEXT_TERMINAL_TOKEN @"*"
+#define PAIR_DELIMITER_TOKEN  @":"
 
 
 
@@ -219,10 +221,10 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
         //scan a valid context
         NSString *whitespace;
         BOOL didScanWhitespace = [scanner scanCharactersFromSet:whitespaceCharacters intoString:&whitespace];
-        BOOL didScanBullet = [scanner scanString:@"-" intoString:NULL];
+        BOOL didScanBullet = [scanner scanString:CONTEXT_TERMINAL_TOKEN intoString:NULL];
         if (didScanBullet)
         {
-            return (didScanWhitespace) ? [whitespace stringByAppendingString:@"-"] : @"-";
+            return (didScanWhitespace) ? [whitespace stringByAppendingString:CONTEXT_TERMINAL_TOKEN] : CONTEXT_TERMINAL_TOKEN;
         }
         
         //we didn't scan a valid context so advance through all comments and whitespace 
@@ -406,7 +408,10 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     
     //scan all characters up to the collection delimiters
     NSString *permissiveKey;
-    NSCharacterSet *collectionDelimiters = [NSCharacterSet characterSetWithCharactersInString:@"-:"];
+    //The compiler won't concat to CONTEXT_TERMINAL_TOKEN & PAIR_DELIMITER_TOKEN in characterSetWithCharactersInString
+    //This may be the correct compiler behaviour, but I though it would concat them.
+    NSString *collectionDelimitersString = [NSString stringWithFormat:@"%@%@", CONTEXT_TERMINAL_TOKEN, PAIR_DELIMITER_TOKEN];
+    NSCharacterSet *collectionDelimiters = [NSCharacterSet characterSetWithCharactersInString:collectionDelimitersString];
     BOOL didScanPermissiveKey = [scanner scanUpToCharactersFromSet:collectionDelimiters intoString:&permissiveKey];
     
     if (didScanPermissiveKey)
@@ -428,9 +433,9 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     NSUInteger startLocation = [scanner scanLocation];
     [self consumeWhitespaceAndComments:YES];
     
-    BOOL didScanPair = [scanner scanString:@":" intoString:NULL];
+    BOOL didScanPair = [scanner scanString:PAIR_DELIMITER_TOKEN intoString:NULL];
     
-    if (didScanPair) return @":";
+    if (didScanPair) return PAIR_DELIMITER_TOKEN;
     
     //we've failed. reset
     [scanner setScanLocation:startLocation];
@@ -753,7 +758,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 -(NSString *)context
 {
     NSString *format = [NSString stringWithFormat:@"\n%%%us", self.contextSize];
-    NSString *result = [NSString stringWithFormat:format, "-"];
+    NSString *result = [NSString stringWithFormat:format, CONTEXT_TERMINAL_TOKEN];
     //    NSLog(@"'%@'", result);
     return result;
 }
@@ -874,7 +879,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
         [self writeString:key];
         
         //write split
-        [self appendString:@":"];
+        [self appendString:PAIR_DELIMITER_TOKEN];
         
         
         //write value
@@ -909,7 +914,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     if (!didWriteFirstElement)
     {
         [self appendString:context];    
-        [self appendString:@":"];            
+        [self appendString:PAIR_DELIMITER_TOKEN];            
     }
     
     return YES;    

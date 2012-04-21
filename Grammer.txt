@@ -6,7 +6,7 @@ value			scalar | collection
 collection		array | object
 scalar			number | true | false | null | string
 
-context			'\n' [' ' | '\t']* '-'
+context			'\n' [' ' | '\t']* '*'
 
 array			element+ | emptyElement
 emptyElement		context

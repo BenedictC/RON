@@ -710,7 +710,9 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 #pragma mark - EMKRONWriter
 @implementation EMKRONWriter
-
+{
+    NSMutableString *_string;
+}
 #pragma mark properties
 @synthesize object = _object;
 @synthesize data = _data;
@@ -726,6 +728,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     {
         _object = object;
         _data = [NSMutableData data];
+        _string = [NSMutableString new];
     }
     return self;
 }
@@ -760,7 +763,8 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 #pragma mark append to data
 -(void)appendString:(NSString *)string
 {
-    NSLog(@"Appending string: %@", string);
+//    NSLog(@"Appending string: %@", string);
+    [_string appendString:string];
     [self.data appendData:[string dataUsingEncoding:NSUTF8StringEncoding]];
 }
  
@@ -859,6 +863,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     
     __block NSUInteger elementCount = 0;
     __block BOOL wasPreviousElementACollection = NO;    
+    __block BOOL didWriteFirstElement = NO;
     
     [object enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) 
     {
@@ -879,10 +884,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
             wasPreviousElementACollection = NO;
         }
         else
-        {
-            //we need an empty element to distinguish between this element and the last
-            if (wasPreviousElementACollection) [self appendString:context];
-            
+        {           
             [self pushContext];
             didWriteValue = [self writeCollection:value];            
             if (didWriteValue) wasPreviousElementACollection = YES;            
@@ -895,16 +897,19 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
             [[NSException exceptionWithName:NSGenericException reason:reason userInfo:nil] raise];
             return;            
         }
+        else
+        {
+            didWriteFirstElement = YES;
+        }
         
         elementCount++;
     }];
     
     //there has to be some artifact that this array existed!
-    //    BOOL shouldWriteEmptyElement = (elementCount == 0);
-    //    if (shouldWriteEmptyElement)
-    //    {
-    //        [self.data appendData:context];    
-    //    }
+    if (!didWriteFirstElement)
+    {
+        [self appendString:context];    
+    }
     
     return YES;    
 }

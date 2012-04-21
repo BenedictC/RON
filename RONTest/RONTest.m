@@ -37,11 +37,7 @@
     
     for (NSString *jsonFilename in corpusFilenames)
     {
-        if (![[jsonFilename pathExtension] isEqualToString:@"json"]) continue;
-    
-        
-if (![jsonFilename isEqualToString:@"products.json"])  continue;
-        
+        if (![[jsonFilename pathExtension] isEqualToString:@"json"]) continue;                
         
         NSLog(@"Testing %@", jsonFilename);
         NSString *path = [corpusPath stringByAppendingPathComponent:jsonFilename];
@@ -50,6 +46,7 @@ if (![jsonFilename isEqualToString:@"products.json"])  continue;
         id jsonObjects = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:NULL];
         
         NSData *ronData = [EMKRONSerialization dataWithRONObject:jsonObjects options:0 error:NULL];
+//        NSLog(@"\n%@",[NSString stringWithFormat:@"%s", [ronData bytes]]);
         id ronObjects  = [EMKRONSerialization RONObjectWithData:ronData options:0 error:NULL];
         
         STAssertEqualObjects(jsonObjects, ronObjects, @"\n%@ failed", jsonFilename);        

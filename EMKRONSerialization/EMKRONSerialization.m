@@ -8,12 +8,33 @@
 
 #import "EMKRONSerialization.h"
 
+#pragma mark - token definitions
+#define CONTEXT_TERMINAL_TOKEN @"*"
+#define PAIR_DELIMITER_TOKEN  @":"
+#define NULL_TOKEN @"null"
+#define TRUE_TOKEN @"true"
+#define YES_TOKEN @"yes"
+#define FALSE_TOKEN @"false"
+#define NO_TOKEN @"no"
+#define NEW_LINE_TOKEN @"\n"
+#define EMPTY_STRING_TOKEN @""
+#define STRAIGHT_SINGLE_QUOTE_TOKEN @"'"
+#define STRAIGHT_DOUBLE_QUOTE_TOKEN @"\"" 
+#define OPENING_SMART_SINGLE_QUOTE_TOKEN @"\u2018"
+#define CLOSING_SMART_SINGLE_QUOTE_TOKEN @"\u2019"
+#define OPENING_SMART_DOUBLE_QUOTE_TOKEN @"\u201c"
+#define CLOSING_SMART_DOUBLE_QUOTE_TOKEN @"\u201d"
+#define OPENING_SQUARE_BRACE_TOKEN @"["
+#define CLOSING_SQUARE_BRACE_TOKEN @"]"
+#define OPENING_CURLY_BRACE_TOKEN @"{"
+#define CLOSING_CURLY_BRACE_TOKEN @"}"
+#define INLINE_COMMENT_TOKEN @"//"
+#define OPENING_BLOCK_COMMENT_TOKEN @"/*"
+#define CLOSING_BLOCK_COMMENT_TOKEN @"*/"
 
 
 #pragma mark - Constants
 NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
-#define CONTEXT_TERMINAL_TOKEN @"*"
-#define PAIR_DELIMITER_TOKEN  @":"
 
 
 
@@ -231,7 +252,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
         //until the next new line
         [self consumeWhitespaceAndComments:NO];
         
-        isAtStartOfNewLine = [scanner scanString:@"\n" intoString:NULL];
+        isAtStartOfNewLine = [scanner scanString:NEW_LINE_TOKEN intoString:NULL];
     }
     
     //we failed. reset.
@@ -469,7 +490,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     NSUInteger startLocation = scanner.scanLocation;    
     [self consumeWhitespaceAndComments:YES];
     
-    BOOL didScanBool = [scanner scanString:@"yes" intoString:NULL] || [scanner scanString:@"true" intoString:NULL];
+    BOOL didScanBool = [scanner scanString:YES_TOKEN intoString:NULL] || [scanner scanString:TRUE_TOKEN intoString:NULL];
     
     if (didScanBool) return [NSNumber numberWithBool:YES];
     
@@ -486,7 +507,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     NSUInteger startLocation = scanner.scanLocation;    
     [self consumeWhitespaceAndComments:YES];
     
-    BOOL didScanBool = [scanner scanString:@"no" intoString:NULL] || [scanner scanString:@"false" intoString:NULL];
+    BOOL didScanBool = [scanner scanString:NO_TOKEN intoString:NULL] || [scanner scanString:FALSE_TOKEN intoString:NULL];
     
     if (didScanBool) return [NSNumber numberWithBool:NO];
     
@@ -503,7 +524,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     NSUInteger startLocation = scanner.scanLocation;    
     [self consumeWhitespaceAndComments:YES];
     
-    BOOL didScanNull = [scanner scanString:@"null" intoString:NULL];
+    BOOL didScanNull = [scanner scanString:NULL_TOKEN intoString:NULL];
     
     if (didScanNull) return [NSNull null];
     
@@ -552,16 +573,16 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
             didScanCloseDelimiter = didScanCloseDelimiter; //silence the compiler warning
             //TODO: if (!didScanCloseQuote) FATAL ERROR!
             
-            if (!didScanFixedDelimitedString) result = @"";
+            if (!didScanFixedDelimitedString) result = EMPTY_STRING_TOKEN;
         }
 
         return didScanOpenDelimiter;
     };
     
-    didScanString = scanFixedDelimitedString(@"'");
+    didScanString = scanFixedDelimitedString(STRAIGHT_SINGLE_QUOTE_TOKEN);
     if (didScanString) return result;
     
-    didScanString = scanFixedDelimitedString(@"\"");
+    didScanString = scanFixedDelimitedString(STRAIGHT_DOUBLE_QUOTE_TOKEN);
     if (didScanString) return result;
     
     //2. Parse balanced string
@@ -607,12 +628,10 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
         return didScanInitialOpenDelimitter;
     };
     
-    //U+2018 = Single opening           U+2019 = Single closing
-    didScanString = scanBalancedDelimitedString(@"\u2018", @"\u2019");
+    didScanString = scanBalancedDelimitedString(OPENING_SMART_SINGLE_QUOTE_TOKEN, CLOSING_SMART_SINGLE_QUOTE_TOKEN);
     if (didScanString) return result;
 
-    //U+201C = Double opening           U+201D = Double closing    
-    didScanString = scanBalancedDelimitedString(@"\u201c", @"\u201d");
+    didScanString = scanBalancedDelimitedString(OPENING_SMART_DOUBLE_QUOTE_TOKEN, CLOSING_SMART_DOUBLE_QUOTE_TOKEN);
     if (didScanString) return result;
 
     //3.Parse dynamic delimited string
@@ -631,16 +650,16 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
             BOOL didScanComposedClosedDelimiter = [scanner scanString:composedCloseDelimiter intoString:NULL];
             didScanComposedClosedDelimiter = didScanComposedClosedDelimiter; //silent compiler warning   
             //TODO: if (!didScanCloseQuote) FATAL ERROR!
-            if (!didScanDynamicallyDelimitedString) result = @"";
+            if (!didScanDynamicallyDelimitedString) result = EMPTY_STRING_TOKEN;
         }
         
         return didScanInitalOpeningDelimiter;
     };
     
-    didScanString = scanDynamicDelimitedString(@"[", @"]");
+    didScanString = scanDynamicDelimitedString(OPENING_SQUARE_BRACE_TOKEN, CLOSING_SQUARE_BRACE_TOKEN);
     if (didScanString) return result;
 
-    didScanString = scanDynamicDelimitedString(@"{", @"}");
+    didScanString = scanDynamicDelimitedString(OPENING_CURLY_BRACE_TOKEN, CLOSING_CURLY_BRACE_TOKEN);
     if (didScanString) return result;
     
     //we failed. reset.
@@ -656,10 +675,10 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     
     NSScanner *scanner = self.scanner;
     NSString *result;
-    BOOL didScanString = [scanner scanUpToString:@"\n" intoString:&result];
-    [scanner scanString:@"\n" intoString:NULL];
+    BOOL didScanString = [scanner scanUpToString:NEW_LINE_TOKEN intoString:&result];
+    [scanner scanString:NEW_LINE_TOKEN intoString:NULL];
     
-    return (didScanString) ? result : @"";    
+    return (didScanString) ? result : EMPTY_STRING_TOKEN;    
 }
 
 
@@ -687,18 +706,18 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     NSUInteger startLocation = [scanner scanLocation];
     
     //scan for inline comments
-    BOOL didScanInlineComment = [scanner scanString:@"//" intoString:NULL];
+    BOOL didScanInlineComment = [scanner scanString:INLINE_COMMENT_TOKEN intoString:NULL];
     if (didScanInlineComment) 
     {
-        [scanner scanUpToString:@"\n" intoString:NULL];
+        [scanner scanUpToString:NEW_LINE_TOKEN intoString:NULL];
         return YES;
     }
     
     //scan for block comments
-    BOOL didScanCommentOpening = [scanner scanString:@"/*" intoString:NULL];
+    BOOL didScanCommentOpening = [scanner scanString:OPENING_BLOCK_COMMENT_TOKEN intoString:NULL];
     if (!didScanCommentOpening) return NO;
-    [scanner scanUpToString:@"*/" intoString:NULL];
-    BOOL didScanCommentClosing = [scanner scanString:@"*/" intoString:NULL];    
+    [scanner scanUpToString:CLOSING_BLOCK_COMMENT_TOKEN intoString:NULL];
+    BOOL didScanCommentClosing = [scanner scanString:CLOSING_BLOCK_COMMENT_TOKEN intoString:NULL];    
     if (!didScanCommentClosing)
     {
         NSString *reason = [NSString stringWithFormat:@"Comment starting at %ul does not close.", startLocation];
@@ -988,7 +1007,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     //TODO: is this best way to determine if the value is a bool?
     if (number == [NSNumber numberWithBool:YES]) 
     {
-        [self appendString:@"true"];
+        [self appendString:TRUE_TOKEN];
         return YES;
     }
     
@@ -1004,7 +1023,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     //TODO: is this best way to determine if the value is a bool?
     if (number == [NSNumber numberWithBool:NO]) 
     {
-        [self appendString:@"false"];
+        [self appendString:FALSE_TOKEN];
         return YES;        
     }
     
@@ -1017,7 +1036,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 {
     if (![null isKindOfClass:[NSNull class]]) return NO;
     
-    [self appendString:@"null"];
+    [self appendString:NULL_TOKEN];
     return YES;        
 }
 
@@ -1037,8 +1056,8 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
         return NO;  
     };
     
-    NSArray *square  = [NSArray arrayWithObjects: @"[", @"]", nil];
-    NSArray *curly   = [NSArray arrayWithObjects: @"{", @"}", nil];
+    NSArray *square  = [NSArray arrayWithObjects: OPENING_SQUARE_BRACE_TOKEN, CLOSING_SQUARE_BRACE_TOKEN, nil];
+    NSArray *curly   = [NSArray arrayWithObjects: OPENING_CURLY_BRACE_TOKEN, CLOSING_CURLY_BRACE_TOKEN, nil];
     NSArray *pairs = [NSArray arrayWithObjects:square, curly, nil];
     
     NSUInteger quoteLength = 1;

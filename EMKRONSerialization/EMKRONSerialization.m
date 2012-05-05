@@ -347,7 +347,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
             {
                 //if we've parsed at least 1 member then we must be an object.
                 //Each object must contain a pair delimiter
-                NSString *reason = [NSString stringWithFormat:@"Member does not contain a ':' between key and value at %ul.", [scanner scanLocation]];
+                NSString *reason = [NSString stringWithFormat:@"Member does not contain a ':' between key and value at %lu.", [scanner scanLocation]];
                 [[NSException exceptionWithName:NSGenericException reason:reason userInfo:nil] raise];
                 return nil;
             }
@@ -777,7 +777,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 -(NSString *)context
 {
     NSString *format = [NSString stringWithFormat:@"\n%%%us", self.contextSize];
-    NSString *result = [NSString stringWithFormat:format, CONTEXT_TERMINAL_TOKEN];
+    NSString *result = [NSString stringWithFormat:format, [CONTEXT_TERMINAL_TOKEN UTF8String]];
     //    NSLog(@"'%@'", result);
     return result;
 }

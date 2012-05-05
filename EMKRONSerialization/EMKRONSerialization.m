@@ -394,7 +394,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
             [members setObject:value forKey:key];            
         }
         
-        //Once we have parsed 1 member we know that the collection is certainly a object and not an array
+        //Once we have parsed 1 member we know that the collection is certainly an object and not an array
         //we can thus improve subsequent error checks.
         didParseFirstMemeber = YES;
         

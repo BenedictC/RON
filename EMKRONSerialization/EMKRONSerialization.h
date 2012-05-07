@@ -14,10 +14,17 @@ typedef enum
 {
     EMKRONReadingStrictMode = (0),
     EMKRONReadingPermissiveMode = (1UL << 0),    
-    EMKRONReadingMutableContainers = (1UL << 1),
-    EMKRONReadingMutableLeaves = (1UL << 2),
-    EMKRONReadingAllowFragments = (1UL << 3)
-} EMKRONSerializationOptions;
+//    EMKRONReadingMutableContainers = (1UL << 1),
+//    EMKRONReadingMutableLeaves = (1UL << 2),
+//    EMKRONReadingAllowFragments = (1UL << 3)
+} EMKRONReadingOptions;
+
+
+
+typedef enum
+{
+    EMKRONWritingFullQuoting = (0),
+} EMKRONWritingOptions;
 
 extern NSString * const EMKRONErrorDomain;
 
@@ -25,11 +32,12 @@ extern NSString * const EMKRONErrorDomain;
 
 @interface EMKRONSerialization : NSObject
 
-+(id)RONObjectWithData:(NSData *)ronData options:(EMKRONSerializationOptions)options error:(NSError *__autoreleasing *)error;
-+(NSData *)dataWithRONObject:(id)object options:(EMKRONSerializationOptions)options error:(NSError *__autoreleasing *)error;
++(id)RONObjectWithData:(NSData *)ronData options:(EMKRONReadingOptions)options error:(NSError *__autoreleasing *)error;
+//+ JSONObjectWithStream:options:error: //TODO:
 
-//TODO:
-//+ JSONObjectWithStream:options:error:
-//+ writeJSONObject:toStream:options:error:
-//+ isValidJSONObject:
++(NSData *)dataWithRONObject:(id)object options:(EMKRONReadingOptions)options error:(NSError *__autoreleasing *)error;
+//+(NSInteger)writeRONObject:(id)obj toStream:(NSOutputStream *)stream options:(EMKRONWritingOptions)opt error:(NSError **)error;
+
+
+//+ isValidJSONObject: //TODO:
 @end

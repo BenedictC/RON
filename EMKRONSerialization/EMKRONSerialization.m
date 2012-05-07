@@ -41,9 +41,9 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 #pragma mark - Private classes interfaces
 @interface EMKRONParser : NSObject
 @property(nonatomic, readonly) NSScanner *scanner;
-@property(nonatomic, readonly) EMKRONSerializationOptions parseMode;
+@property(nonatomic, readonly) EMKRONReadingOptions parseMode;
 
--(id)initWithRonString:(NSString *)ron parseMode:(EMKRONSerializationOptions)parseMode;
+-(id)initWithRonString:(NSString *)ron parseMode:(EMKRONReadingOptions)parseMode;
 -(id)parse:(NSError *__autoreleasing *)error;
 @end
 
@@ -69,7 +69,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 #pragma mark - EMKRONSerialization (facade)
 @implementation EMKRONSerialization
 
-+(id)RONObjectWithData:(NSData *)data options:(EMKRONSerializationOptions)options error:(NSError *__autoreleasing *)error;
++(id)RONObjectWithData:(NSData *)data options:(EMKRONReadingOptions)options error:(NSError *__autoreleasing *)error;
 {
     NSString *ron = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     EMKRONParser *parser = [[EMKRONParser alloc] initWithRonString:ron parseMode:EMKRONReadingStrictMode];
@@ -79,7 +79,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 
 
-+(NSData *)dataWithRONObject:(id)object options:(EMKRONSerializationOptions)options error:(NSError *__autoreleasing *)error
++(NSData *)dataWithRONObject:(id)object options:(EMKRONReadingOptions)options error:(NSError *__autoreleasing *)error
 {
     EMKRONWriter *writer = [[EMKRONWriter alloc] initWithObject:object];
     
@@ -112,7 +112,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 
 #pragma mark instance life cycle
--(id)initWithRonString:(NSString *)ron parseMode:(EMKRONSerializationOptions)parseMode
+-(id)initWithRonString:(NSString *)ron parseMode:(EMKRONReadingOptions)parseMode
 {
     self = [super init];
     if (self != nil)
@@ -637,23 +637,27 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     //3.Parse dynamic delimited string
     BOOL (^scanDynamicDelimitedString)(NSString *, NSString *) = ^(NSString *openDelimiter, NSString *closeDelimiter)
     {
-        BOOL didScanInitalOpeningDelimiter = [scanner scanString:openDelimiter intoString:NULL];
-        if (didScanInitalOpeningDelimiter)
+        NSString *openingDelimiterSequence;
+        BOOL didScanOpeningDelimiterSequence = [scanner scanCharactersFromSet:[NSCharacterSet characterSetWithCharactersInString:openDelimiter] intoString:&openingDelimiterSequence];
+        if (didScanOpeningDelimiterSequence)
         {
-            NSMutableString *composedCloseDelimiter = [closeDelimiter mutableCopy];
-            while ([scanner scanString:openDelimiter intoString:NULL])
-            {
-                [composedCloseDelimiter appendString:closeDelimiter];
-            }
+            //create the closing delimiter sequence
+            NSMutableString *closingDelimiterSequence = [closeDelimiter mutableCopy];
+            for (int i = 1; i < [openingDelimiterSequence length]; i++) [closingDelimiterSequence appendString:closeDelimiter];
             
-            BOOL didScanDynamicallyDelimitedString = [scanner scanUpToString:composedCloseDelimiter intoString:&result];
-            BOOL didScanComposedClosedDelimiter = [scanner scanString:composedCloseDelimiter intoString:NULL];
+            //scan past the closingDelimiterSequence (there may still be closing delimiters tokens after the closing sequence)
+            BOOL didScanDynamicallyDelimitedString = [scanner scanUpToString:closingDelimiterSequence intoString:&result];
+            BOOL didScanComposedClosedDelimiter = [scanner scanString:closingDelimiterSequence intoString:NULL];
             didScanComposedClosedDelimiter = didScanComposedClosedDelimiter; //silent compiler warning   
+            
+            //append any remaing close delimiter tokens on to the result
+            while ([scanner scanString:closeDelimiter intoString:NULL]) result = [result stringByAppendingString:closeDelimiter];
+
             //TODO: if (!didScanCloseQuote) FATAL ERROR!
             if (!didScanDynamicallyDelimitedString) result = EMPTY_STRING_TOKEN;
         }
         
-        return didScanInitalOpeningDelimiter;
+        return didScanOpeningDelimiterSequence;
     };
     
     didScanString = scanDynamicDelimitedString(OPENING_SQUARE_BRACE_TOKEN, CLOSING_SQUARE_BRACE_TOKEN);
@@ -734,9 +738,6 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 #pragma mark - EMKRONWriter
 @implementation EMKRONWriter
-{
-    NSMutableString *_string;
-}
 #pragma mark properties
 @synthesize object = _object;
 @synthesize data = _data;
@@ -752,7 +753,6 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     {
         _object = object;
         _data = [NSMutableData data];
-        _string = [NSMutableString new];
     }
     return self;
 }
@@ -788,8 +788,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 -(void)appendString:(NSString *)string
 {
 //    NSLog(@"Appending string: %@", string);
-    [_string appendString:string];
-    [self.data appendData:[string dataUsingEncoding:NSUTF8StringEncoding]];
+    [_data appendBytes:[string UTF8String] length:[string lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
 }
  
 
@@ -817,6 +816,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     }
     
     //return an immutable copy
+    //TODO: This is strictly correct, but is it sane?
     return [self.data copy];
 }
 

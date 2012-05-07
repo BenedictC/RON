@@ -46,6 +46,7 @@
 		B582B5B315342FFC00E255B0 /* Grammer.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Grammer.txt; sourceTree = "<group>"; };
 		B582B5B415342FFD00E255B0 /* license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = license.txt; sourceTree = "<group>"; };
 		B582B5B51534301800E255B0 /* JSON test corpus */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "JSON test corpus"; sourceTree = "<group>"; };
+		B584F61E15556FB800BD0198 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B5CF0CAC1542D641003491D6 /* TODO.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = TODO.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -76,6 +77,7 @@
 				B582B5A915342EB200E255B0 /* EMKRONSerialization */,
 				B582B5AC15342EB200E255B0 /* ron */,
 				B582B59B15342E0800E255B0 /* RONTest */,
+				B584F61D15556FB800BD0198 /* Frameworks */,
 				B5228393152F32420025AB02 /* Products */,
 				B582B5B215342FFC00E255B0 /* readme */,
 				B582B5B315342FFC00E255B0 /* Grammer.txt */,
@@ -140,6 +142,14 @@
 				B5228396152F32420025AB02 /* Foundation.framework */,
 			);
 			path = ron;
+			sourceTree = "<group>";
+		};
+		B584F61D15556FB800BD0198 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B584F61E15556FB800BD0198 /* Foundation.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

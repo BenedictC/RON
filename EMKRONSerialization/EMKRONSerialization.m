@@ -373,7 +373,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
                 BOOL isValueContextValid = [valueContext length] > [collectionContext length];
                 if (!isValueContextValid)
                 {
-                    NSString *reason = [NSString stringWithFormat:@"Collection at %ul has a smaller context than its parent.", [scanner scanLocation]];
+                    NSString *reason = [NSString stringWithFormat:@"Collection at %lu has a smaller context than its parent.", [scanner scanLocation]];
                     [[NSException exceptionWithName:NSGenericException reason:reason userInfo:nil] raise];
                     return nil;
                 }
@@ -383,7 +383,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
             id value = (isValueACollection) ? [self parseCollection] : [self parseScalar];
             if (value == nil) 
             {
-                NSString *reason = [NSString stringWithFormat:@"Member at %ul does not have a value.", [scanner scanLocation]];
+                NSString *reason = [NSString stringWithFormat:@"Member at %lu does not have a value.", [scanner scanLocation]];
                 [[NSException exceptionWithName:NSGenericException reason:reason userInfo:nil] raise];
                 return nil;
             }
@@ -722,7 +722,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     BOOL didScanCommentClosing = [scanner scanString:CLOSING_BLOCK_COMMENT_TOKEN intoString:NULL];    
     if (!didScanCommentClosing)
     {
-        NSString *reason = [NSString stringWithFormat:@"Comment starting at %ul does not close.", startLocation];
+        NSString *reason = [NSString stringWithFormat:@"Comment starting at %lu does not close.", startLocation];
         [[NSException exceptionWithName:NSGenericException reason:reason userInfo:nil] raise];
         return NO;        
     }

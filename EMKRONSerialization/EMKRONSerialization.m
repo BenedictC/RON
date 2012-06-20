@@ -52,19 +52,28 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 
 
-@interface EMKRONWriter : NSObject
+@interface EMKRONStreamWriter : NSObject
 @property(readonly, nonatomic) id object;
-@property(readonly, nonatomic) NSMutableData *data;
+@property(readonly, nonatomic) NSOutputStream *stream;
 @property(readwrite, nonatomic) NSUInteger contextSize;
 
--(id)initWithObject:(id)object;
--(NSData *)write:(NSError *__autoreleasing *)error;
+-(id)initWithStream:(NSOutputStream *)stream object:(id)object;
+-(BOOL)write:(NSError *__autoreleasing *)error;
 @end
 
 
 
 #pragma mark - EMKRONSerialization (facade)
 @implementation EMKRONSerialization
+
+//reading methods
++(BOOL)RONObjectWithStream:(NSInputStream *)stream options:(EMKRONReadingOptions)options error:(NSError *__autoreleasing *)error
+{
+    //TODO:
+    return NO;
+}
+
+
 
 +(id)RONObjectWithData:(NSData *)data options:(EMKRONReadingOptions)options error:(NSError *__autoreleasing *)error;
 {
@@ -76,11 +85,24 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 
 
+//writing methods
++(BOOL)writeRONObject:(id)object toStream:(NSOutputStream *)stream options:(EMKRONWritingOptions)opt error:(NSError **)error
+{
+    EMKRONStreamWriter *writer = [[EMKRONStreamWriter alloc] initWithStream:stream object:object];    
+    return [writer write:error];
+}
+
+
+
 +(NSData *)dataWithRONObject:(id)object options:(EMKRONReadingOptions)options error:(NSError *__autoreleasing *)error
 {
-    EMKRONWriter *writer = [[EMKRONWriter alloc] initWithObject:object];
+    //create and open an stream which we can get an NSData from
+    NSOutputStream *outStream = [NSOutputStream outputStreamToMemory];
+    [outStream open];
     
-    return [writer write:error];    
+    BOOL success = [self writeRONObject:object toStream:outStream options:options error:error];
+    
+    return success ? [outStream propertyForKey:NSStreamDataWrittenToMemoryStreamKey] : nil;
 }
 
 @end
@@ -735,22 +757,22 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 
 #pragma mark - EMKRONWriter
-@implementation EMKRONWriter
+@implementation EMKRONStreamWriter
 #pragma mark properties
 @synthesize object = _object;
-@synthesize data = _data;
+@synthesize stream = _stream;
 @synthesize contextSize = _contextSize;
 
 
 
 #pragma mark instance life cycle
--(id)initWithObject:(id)object
+-(id)initWithStream:(NSOutputStream *)stream object:(id)object
 {
     self = [super init];
     if (self != nil)
     {
+        _stream = stream;
         _object = object;
-        _data = [NSMutableData data];
     }
     return self;
 }
@@ -786,14 +808,42 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 -(void)appendString:(NSString *)string
 {
 //    NSLog(@"Appending string: %@", string);
+    //Fetch the bytes to write as UTF8
     //TODO: This is wrong because the string may contain a BOM and a terminating \0
-    [_data appendBytes:[string UTF8String] length:[string lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
+    const u_int8_t * bytes = (const u_int8_t *)[string UTF8String];    
+    const NSUInteger length = [string lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+    
+    //loop until we write all the bytes
+    NSUInteger remainingBytes = length;
+    while (remainingBytes != 0)
+    {
+        const u_int8_t *offsetBytes = bytes + (length-remainingBytes);
+        NSInteger result = [[self stream] write:offsetBytes maxLength:remainingBytes];
+        
+        if (result == 0) //0 means that the stream is full
+        {
+            NSString *reason = @"Cannot write to stream. Stream is full.";
+            [[NSException exceptionWithName:NSGenericException reason:reason userInfo:nil] raise];
+            return;
+        }
+        else if (result == -1) //-1 means general error
+        {
+            NSString *reason = [NSString stringWithFormat:@"Error writing to stream: %@.", [[_stream streamError] localizedDescription]];
+            [[NSException exceptionWithName:NSGenericException reason:reason userInfo:nil] raise];
+            return;        
+        }
+        else //result == number of bytes written
+        {
+            remainingBytes -= result;
+        }
+    }
+
 }
  
 
 
 #pragma mark writing
--(NSData *)write:(NSError *__autoreleasing *)error
+-(BOOL)write:(NSError *__autoreleasing *)error
 {
     BOOL didWriteCollection = NO;    
     @try 
@@ -804,19 +854,19 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     {
         NSError *__autoreleasing exceptionError = nil;
         error = &exceptionError;
-        return nil;
+        return NO;
     }
     
     if (!didWriteCollection) 
     {
         NSError *__autoreleasing objectNotACollectionError = nil;
         error = &objectNotACollectionError;
-        return nil;        
+        return NO;        
     }
     
     //return an immutable copy
     //TODO: This is strictly correct, but is it sane?
-    return [self.data copy];
+    return YES;
 }
 
 

@@ -14,6 +14,8 @@ typedef enum
 {
     EMKRONReadingStrictMode = (0),
     EMKRONReadingPermissiveMode = (1UL << 0),    
+
+    //TODO:
 //    EMKRONReadingMutableContainers = (1UL << 1),
 //    EMKRONReadingMutableLeaves = (1UL << 2),
 //    EMKRONReadingAllowFragments = (1UL << 3)
@@ -32,12 +34,13 @@ extern NSString * const EMKRONErrorDomain;
 
 @interface EMKRONSerialization : NSObject
 
+//TODO:
+//+(BOOL)RONObjectWithStream:(NSInputStream *)stream options:(EMKRONReadingOptions)options error:(NSError *__autoreleasing *)error 
 +(id)RONObjectWithData:(NSData *)ronData options:(EMKRONReadingOptions)options error:(NSError *__autoreleasing *)error;
-//+ JSONObjectWithStream:options:error: //TODO:
 
++(BOOL)writeRONObject:(id)object toStream:(NSOutputStream *)stream options:(EMKRONWritingOptions)opt error:(NSError **)error;
 +(NSData *)dataWithRONObject:(id)object options:(EMKRONReadingOptions)options error:(NSError *__autoreleasing *)error;
-//+(NSInteger)writeRONObject:(id)obj toStream:(NSOutputStream *)stream options:(EMKRONWritingOptions)opt error:(NSError **)error;
 
-
-//+ isValidJSONObject: //TODO:
+//TODO:
+//+ isValidJSONObject: 
 @end

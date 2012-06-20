@@ -40,9 +40,6 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 #pragma mark - Private classes interfaces
 @interface EMKRONParser : NSObject
-@property(nonatomic, readonly) NSScanner *scanner;
-@property(nonatomic, readonly) EMKRONReadingOptions parseMode;
-
 -(id)initWithRonString:(NSString *)ron parseMode:(EMKRONReadingOptions)parseMode;
 -(id)parse:(NSError *__autoreleasing *)error;
 @end
@@ -104,10 +101,11 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 #pragma mark - strict parser class
 @implementation EMKRONParser
-
-#pragma mark properties
-@synthesize scanner = _scanner;
-@synthesize parseMode = _parseMode;
+{
+#pragma mark ivars    
+    NSScanner * const _scanner;
+    EMKRONReadingOptions _parseMode;
+}
 
 
 
@@ -117,7 +115,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     self = [super init];
     if (self != nil)
     {
-        _scanner = [NSScanner scannerWithString:ron];
+        [self setValue:[NSScanner scannerWithString:ron] forKey:@"scanner"];
         [_scanner setCharactersToBeSkipped:nil];
 
         _parseMode = parseMode;
@@ -130,7 +128,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 #pragma mark document parsing
 -(id)parse:(NSError *__autoreleasing *)error
 {
-    NSScanner *scanner = self.scanner;
+    NSScanner *scanner = _scanner;
     id value = nil;
     
     BOOL isDocumentEmpty = [scanner isAtEnd];
@@ -231,7 +229,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 -(NSString *)parseContext
 {
     //we assume that we're at the start of a line
-    NSScanner *scanner = self.scanner;
+    NSScanner *scanner = _scanner;
     NSUInteger contextStartLocation = [scanner scanLocation];
     
     NSCharacterSet *whitespaceCharacters = [NSCharacterSet whitespaceCharacterSet];    
@@ -264,7 +262,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 -(NSString *)lookAheadContext
 {
-    NSScanner *scanner = self.scanner;
+    NSScanner *scanner = _scanner;
     NSUInteger scanLocation = [scanner scanLocation];
     NSString *context = [self parseContext];
     [scanner setScanLocation:scanLocation];
@@ -275,7 +273,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 -(NSArray *)parseArray
 {   
-    NSScanner *scanner = self.scanner;    
+    NSScanner *scanner = _scanner;    
     NSUInteger contextStartLocation = [scanner scanLocation];
     
     //get the collecton context (i.e. the first elements context)
@@ -319,7 +317,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 -(NSDictionary *)parseObject
 {
-    NSScanner *scanner = self.scanner;    
+    NSScanner *scanner = _scanner;    
     NSUInteger contextStartLocation = [scanner scanLocation];
     
     //get the collecton context (i.e. the first elements context)
@@ -423,7 +421,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     if (key != nil) return key;
     
     //store location
-    NSScanner *scanner = self.scanner;
+    NSScanner *scanner = _scanner;
     NSUInteger startLocation = [scanner scanLocation];
     [self consumeWhitespaceAndComments:YES];
     
@@ -450,7 +448,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 -(NSString *)parsePairDelimiter
 {
-    NSScanner *scanner = self.scanner;
+    NSScanner *scanner = _scanner;
     NSUInteger startLocation = [scanner scanLocation];
     [self consumeWhitespaceAndComments:YES];
     
@@ -468,7 +466,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 #pragma mark scalar value parsing (these methods consume leading white space and comments)
 -(NSNumber *)parseNumber
 {
-    NSScanner *scanner = self.scanner;
+    NSScanner *scanner = _scanner;
     NSUInteger startLocation = scanner.scanLocation;    
     [self consumeWhitespaceAndComments:YES];
         
@@ -486,7 +484,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 -(NSNumber *)parseTrue
 {
-    NSScanner *scanner = self.scanner;
+    NSScanner *scanner = _scanner;
     NSUInteger startLocation = scanner.scanLocation;    
     [self consumeWhitespaceAndComments:YES];
     
@@ -503,7 +501,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 -(NSNumber *)parseFalse
 {
-    NSScanner *scanner = self.scanner;
+    NSScanner *scanner = _scanner;
     NSUInteger startLocation = scanner.scanLocation;    
     [self consumeWhitespaceAndComments:YES];
     
@@ -520,7 +518,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 -(NSNull *)parseNull
 {
-    NSScanner *scanner = self.scanner;
+    NSScanner *scanner = _scanner;
     NSUInteger startLocation = scanner.scanLocation;    
     [self consumeWhitespaceAndComments:YES];
     
@@ -542,7 +540,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
     string = [self parseStrictString];
     if (string != nil) return string;
     
-    if (self.parseMode != EMKRONReadingPermissiveMode) return nil;
+    if (_parseMode != EMKRONReadingPermissiveMode) return nil;
     
     string = [self parsePermissiveString];
     if (string != nil) return string;
@@ -554,7 +552,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 
 -(NSString *)parseStrictString
 {
-    NSScanner *scanner = self.scanner;
+    NSScanner *scanner = _scanner;
     NSUInteger startLocation = scanner.scanLocation;    
     [self consumeWhitespaceAndComments:YES];    
     
@@ -677,7 +675,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 {
     [self consumeWhitespaceAndComments:YES];    
     
-    NSScanner *scanner = self.scanner;
+    NSScanner *scanner = _scanner;
     NSString *result;
     BOOL didScanString = [scanner scanUpToString:NEW_LINE_TOKEN intoString:&result];
     [scanner scanString:NEW_LINE_TOKEN intoString:NULL];
@@ -699,14 +697,14 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 -(BOOL)consumeWhitespace:(BOOL)shouldConsumeNewline
 {
     NSCharacterSet *whitespace = (shouldConsumeNewline) ? [NSCharacterSet whitespaceAndNewlineCharacterSet] : [NSCharacterSet whitespaceCharacterSet];
-    return [self.scanner scanCharactersFromSet:whitespace intoString:NULL];
+    return [_scanner scanCharactersFromSet:whitespace intoString:NULL];
 }
 
 
 
 -(BOOL)consumeComment
 {
-    NSScanner *scanner = self.scanner;
+    NSScanner *scanner = _scanner;
     NSUInteger startLocation = [scanner scanLocation];
     
     //scan for inline comments
@@ -788,6 +786,7 @@ NSString * const EMKRONErrorDomain = @"EMKRonErrorDomain";
 -(void)appendString:(NSString *)string
 {
 //    NSLog(@"Appending string: %@", string);
+    //TODO: This is wrong because the string may contain a BOM and a terminating \0
     [_data appendBytes:[string UTF8String] length:[string lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
 }
  

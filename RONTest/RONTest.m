@@ -9,23 +9,24 @@
 #import "RONTest.h"
 
 #import "EMKRONSerialization.h"
+#import "EMKUTF8StreamScanner.h"
 
 
 
 @implementation RONTest
 
-
 //This is a very coarse unit test (it's almost and integration test). We could/(should?) test
 //the individual methods of EMKRONSerialization but:
 //1. The 'interesting' methods of EMKRONSerialization are private
 //2. This approach has been affective
-- (void)testJSONCorpus
-{
+- (void)disabled_testJSONCorpus {
     NSString *corpusPath = [[[NSProcessInfo processInfo] environment] objectForKey:@"JSON_TEST_CORPUS_PATH"];
-    NSArray *corpusFilenames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:corpusPath error:NULL];
+    NSError *error;
+    NSArray *corpusFilenames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:corpusPath error:&error];
+    if (corpusFilenames == nil) STFail(@"Error reading test corpus: %@", error);
+    
         
-    for (NSString *jsonFilename in corpusFilenames)
-    {
+    for (NSString *jsonFilename in corpusFilenames) {
         //we're only interested in .json files
         if (![[jsonFilename pathExtension] isEqualToString:@"json"]) continue;                
         
@@ -44,18 +45,15 @@
         
         //Loop the RON data
         NSData *ronData = [EMKRONSerialization dataWithRONObject:jsonObjects options:0 error:NULL];
+        [ronData writeToFile:[@"/tmp/ron.txt" stringByExpandingTildeInPath] atomically:YES];
         id ronObjects  = [EMKRONSerialization RONObjectWithData:ronData options:0 error:NULL];
         
         //if the RON objects don't match the JSON objects then we may have found a RON bug
         BOOL isJsonEqualToRon = [jsonObjects isEqual:ronObjects];
         STAssertTrue(isJsonEqualToRon, @"%@ failed.", jsonFilename /*, [NSString stringWithFormat:@"%s", [ronData bytes]]*/);                
-
-        //Note that RON has laxer parsing rules for numbers than JSON
-        
         
         //Figure out what to do when a test fails
-        if (!isJsonEqualToRon)
-        {
+        if (!isJsonEqualToRon) {
 //            [ronObjects EMK_logDifferences:jsonObjects];
 //            NSData *faultyJsonObjectsData = [NSJSONSerialization dataWithJSONObject:ronObjects options:0 error:NULL];
 //            [faultyJsonObjectsData writeToFile:@"/Volumes/Users/ben/faultyRonObjects.json" atomically:YES];
@@ -68,42 +66,22 @@
 //            NSString *failedRonDataPath     = [failedRonDataDirectory stringByAppendingPathComponent:ronFilename];
 //            [ronData writeToFile:failedRonDataPath atomically:NO];
         }
-    }    
+    }
 }
 
 
 
-//-(void)testNumbers
-//{
-//    return;
-//    //[-130142114406915000] [1.1217523390167132e-19] [-5514085325291784739] [-1501399301447081980] [-7271305752851720826] [-130142114406914976] [-4573719180530212900] [3808159498143417627] [-2226135764510113982]
-//    NSArray *numberStrings = [@"[-1.755521549112845e-19] [.0000000000000000000569437448157756] [-.000000000000000000175552154911284] [.0000000000000000000638577973698933] [-.000000000000000000689194621146233] [-.000000000000000000356875010196769]" componentsSeparatedByString:@" "];
-//    
-//    for(NSString *numberString in numberStrings)
-//    {
-//        NSNumber *jsonNumber = [[NSJSONSerialization JSONObjectWithData:[numberString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:NULL] lastObject];
-//        NSNumber *scannedNumber = [self scanNumberString:numberString];
-//        BOOL areEqual = jsonNumber != nil && scannedNumber != nil && [scannedNumber isEqualToNumber:jsonNumber];
-//
-//        STAssertTrue(areEqual, @"\nstr : %@\n=============\njson: %@ \nron : %@ \n\n", numberString, jsonNumber, scannedNumber);
-//    }
-//}
-//
-//
-//-(NSNumber *)scanNumberString:(NSString *)numberString
-//{
-//    NSScanner *scanner = [[NSScanner alloc] initWithString:[numberString substringWithRange:NSMakeRange(1, [numberString length]-2)]];
-//    [scanner setCharactersToBeSkipped:nil];
-//
-//    double scannedDouble;
-//    return ([scanner scanDouble:&scannedDouble]) ? [NSNumber numberWithDouble:scannedDouble] : nil;
-//    
-////    long long scannedLongLong;
-////    return ([scanner scanLongLong:&scannedLongLong]) ? [NSNumber numberWithLongLong:scannedLongLong] : nil;
-//    
-////-----------    
-////    NSNumberFormatter *formatter = [NSNumberFormatter new];
-////    return [formatter numberFromString:[numberString substringWithRange:NSMakeRange(1, [numberString length]-2)]];
-//}
+- (void)testRONFile {
+    NSString *corpusPath = [[[NSProcessInfo processInfo] environment] objectForKey:@"JSON_TEST_CORPUS_PATH"];    
+    NSString *path = [corpusPath stringByAppendingPathComponent:@"sample.json"];
+    NSData *jsonData = [NSData dataWithContentsOfFile:path];
+    id jsonObjects = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:NULL];
+    [[NSJSONSerialization dataWithJSONObject:jsonObjects options:0 error:NULL] writeToFile:@"/tmp/looped.json" atomically:YES];
+    [[EMKRONSerialization dataWithRONObject:jsonObjects options:0 error:NULL] writeToFile:@"/tmp/ron.txt" atomically:YES];
+
+    NSData *ronData = [NSData dataWithContentsOfFile:[@"/tmp/ron.txt" stringByExpandingTildeInPath]];
+    id ronObjects = [EMKRONSerialization RONObjectWithData:ronData options:0 error:NULL];
+    STAssertEqualObjects(ronObjects, jsonObjects, @"ronObjects is nil");
+}
 
 @end

@@ -7,7 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		821BB292164A720500C3F1A6 /* EMKRONConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 82C3446C1647D63000268992 /* EMKRONConstants.m */; };
+		82C3446D1647D63000268992 /* EMKRONConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 82C3446C1647D63000268992 /* EMKRONConstants.m */; };
 		B5228397152F32420025AB02 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5228396152F32420025AB02 /* Foundation.framework */; };
+		B5534C0A15987D59005A3DB2 /* EMKToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B5FF63FA159629A900FAC317 /* EMKToken.m */; };
+		B5534C0B15987D59005A3DB2 /* EMKUTF8StreamScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = B57DC6D91596574700CA0150 /* EMKUTF8StreamScanner.m */; };
+		B56C0BC11594A268002AB0C3 /* EMKRONStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = B56C0BC01594A268002AB0C3 /* EMKRONStreamParser.m */; };
+		B56C0BC51594A2BC002AB0C3 /* EMKRONStreamWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = B56C0BC41594A2BC002AB0C3 /* EMKRONStreamWriter.m */; };
+		B56C0BCA1594A622002AB0C3 /* EMKRONStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = B56C0BC01594A268002AB0C3 /* EMKRONStreamParser.m */; };
+		B56C0BCB1594A622002AB0C3 /* EMKRONStreamWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = B56C0BC41594A2BC002AB0C3 /* EMKRONStreamWriter.m */; };
+		B57DC6DA1596574700CA0150 /* EMKUTF8StreamScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = B57DC6D91596574700CA0150 /* EMKUTF8StreamScanner.m */; };
 		B582B59415342E0800E255B0 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B582B59315342E0800E255B0 /* SenTestingKit.framework */; };
 		B582B5A015342E0800E255B0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B582B59E15342E0800E255B0 /* InfoPlist.strings */; };
 		B582B5A315342E0800E255B0 /* RONTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B582B5A215342E0800E255B0 /* RONTest.m */; };
@@ -15,6 +24,10 @@
 		B582B5AF15342EB200E255B0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B582B5AD15342EB200E255B0 /* main.m */; };
 		B582B5B015342F6C00E255B0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5228396152F32420025AB02 /* Foundation.framework */; };
 		B582B5B115342FD000E255B0 /* EMKRONSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = B582B5AB15342EB200E255B0 /* EMKRONSerialization.m */; };
+		B5BDE1FE15A85677009F5C99 /* EMKUTF8StreamScanner+RONScalarMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B5BDE1FD15A85677009F5C99 /* EMKUTF8StreamScanner+RONScalarMatching.m */; };
+		B5BDE1FF15A85677009F5C99 /* EMKUTF8StreamScanner+RONScalarMatching.m in Sources */ = {isa = PBXBuildFile; fileRef = B5BDE1FD15A85677009F5C99 /* EMKUTF8StreamScanner+RONScalarMatching.m */; };
+		B5E166D115A59884006E6A1C /* EMKUTF8StreamScannerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B5E166D015A59884006E6A1C /* EMKUTF8StreamScannerTest.m */; };
+		B5FF63FB159629A900FAC317 /* EMKToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B5FF63FA159629A900FAC317 /* EMKToken.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -30,8 +43,17 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		82C344671647BF7E00268992 /* EMKRONTokensAndTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMKRONTokensAndTypes.h; sourceTree = "<group>"; };
+		82C3446C1647D63000268992 /* EMKRONConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMKRONConstants.m; sourceTree = "<group>"; };
 		B5228392152F32420025AB02 /* RON */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RON; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5228396152F32420025AB02 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		B56C0BBF1594A268002AB0C3 /* EMKRONStreamParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMKRONStreamParser.h; sourceTree = "<group>"; };
+		B56C0BC01594A268002AB0C3 /* EMKRONStreamParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMKRONStreamParser.m; sourceTree = "<group>"; };
+		B56C0BC31594A2BC002AB0C3 /* EMKRONStreamWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMKRONStreamWriter.h; sourceTree = "<group>"; };
+		B56C0BC41594A2BC002AB0C3 /* EMKRONStreamWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMKRONStreamWriter.m; sourceTree = "<group>"; };
+		B56C0BC91594A40A002AB0C3 /* EMKRONConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMKRONConstants.h; sourceTree = "<group>"; };
+		B57DC6D81596574700CA0150 /* EMKUTF8StreamScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMKUTF8StreamScanner.h; sourceTree = "<group>"; };
+		B57DC6D91596574700CA0150 /* EMKUTF8StreamScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMKUTF8StreamScanner.m; sourceTree = "<group>"; };
 		B582B59215342E0800E255B0 /* RONTest.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RONTest.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B582B59315342E0800E255B0 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		B582B59D15342E0800E255B0 /* RONTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RONTest-Info.plist"; sourceTree = "<group>"; };
@@ -43,11 +65,17 @@
 		B582B5AB15342EB200E255B0 /* EMKRONSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMKRONSerialization.m; sourceTree = "<group>"; };
 		B582B5AD15342EB200E255B0 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B582B5B215342FFC00E255B0 /* readme */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme; sourceTree = "<group>"; };
-		B582B5B315342FFC00E255B0 /* Grammer.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Grammer.txt; sourceTree = "<group>"; };
+		B582B5B315342FFC00E255B0 /* Grammar.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Grammar.txt; sourceTree = "<group>"; };
 		B582B5B415342FFD00E255B0 /* license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = license.txt; sourceTree = "<group>"; };
 		B582B5B51534301800E255B0 /* JSON test corpus */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "JSON test corpus"; sourceTree = "<group>"; };
 		B584F61E15556FB800BD0198 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		B5BDE1FC15A85677009F5C99 /* EMKUTF8StreamScanner+RONScalarMatching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "EMKUTF8StreamScanner+RONScalarMatching.h"; sourceTree = "<group>"; };
+		B5BDE1FD15A85677009F5C99 /* EMKUTF8StreamScanner+RONScalarMatching.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "EMKUTF8StreamScanner+RONScalarMatching.m"; sourceTree = "<group>"; };
 		B5CF0CAC1542D641003491D6 /* TODO.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = TODO.txt; sourceTree = "<group>"; };
+		B5E166CF15A59884006E6A1C /* EMKUTF8StreamScannerTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMKUTF8StreamScannerTest.h; sourceTree = "<group>"; };
+		B5E166D015A59884006E6A1C /* EMKUTF8StreamScannerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMKUTF8StreamScannerTest.m; sourceTree = "<group>"; };
+		B5FF63F9159629A900FAC317 /* EMKToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMKToken.h; sourceTree = "<group>"; };
+		B5FF63FA159629A900FAC317 /* EMKToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMKToken.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +99,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8227AE001647083A00C3221B /* Scanner */ = {
+			isa = PBXGroup;
+			children = (
+				B57DC6D81596574700CA0150 /* EMKUTF8StreamScanner.h */,
+				B57DC6D91596574700CA0150 /* EMKUTF8StreamScanner.m */,
+				B5FF63F9159629A900FAC317 /* EMKToken.h */,
+				B5FF63FA159629A900FAC317 /* EMKToken.m */,
+			);
+			name = Scanner;
+			sourceTree = "<group>";
+		};
 		B5228387152F32410025AB02 = {
 			isa = PBXGroup;
 			children = (
@@ -80,7 +119,7 @@
 				B584F61D15556FB800BD0198 /* Frameworks */,
 				B5228393152F32420025AB02 /* Products */,
 				B582B5B215342FFC00E255B0 /* readme */,
-				B582B5B315342FFC00E255B0 /* Grammer.txt */,
+				B582B5B315342FFC00E255B0 /* Grammar.txt */,
 				B582B5B415342FFD00E255B0 /* license.txt */,
 				B5CF0CAC1542D641003491D6 /* TODO.txt */,
 			);
@@ -109,6 +148,8 @@
 			children = (
 				B582B5A115342E0800E255B0 /* RONTest.h */,
 				B582B5A215342E0800E255B0 /* RONTest.m */,
+				B5E166CF15A59884006E6A1C /* EMKUTF8StreamScannerTest.h */,
+				B5E166D015A59884006E6A1C /* EMKUTF8StreamScannerTest.m */,
 				B582B5B51534301800E255B0 /* JSON test corpus */,
 				B5228395152F32420025AB02 /* Frameworks */,
 				B582B59C15342E0800E255B0 /* Supporting Files */,
@@ -129,8 +170,18 @@
 		B582B5A915342EB200E255B0 /* EMKRONSerialization */ = {
 			isa = PBXGroup;
 			children = (
+				B56C0BC91594A40A002AB0C3 /* EMKRONConstants.h */,
+				82C3446C1647D63000268992 /* EMKRONConstants.m */,
 				B582B5AA15342EB200E255B0 /* EMKRONSerialization.h */,
 				B582B5AB15342EB200E255B0 /* EMKRONSerialization.m */,
+				82C344671647BF7E00268992 /* EMKRONTokensAndTypes.h */,
+				B5BDE1FC15A85677009F5C99 /* EMKUTF8StreamScanner+RONScalarMatching.h */,
+				B5BDE1FD15A85677009F5C99 /* EMKUTF8StreamScanner+RONScalarMatching.m */,
+				B56C0BBF1594A268002AB0C3 /* EMKRONStreamParser.h */,
+				B56C0BC01594A268002AB0C3 /* EMKRONStreamParser.m */,
+				B56C0BC31594A2BC002AB0C3 /* EMKRONStreamWriter.h */,
+				B56C0BC41594A2BC002AB0C3 /* EMKRONStreamWriter.m */,
+				8227AE001647083A00C3221B /* Scanner */,
 			);
 			path = EMKRONSerialization;
 			sourceTree = "<group>";
@@ -197,7 +248,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = EMK;
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0450;
 				ORGANIZATIONNAME = "Benedict Cohen";
 			};
 			buildConfigurationList = B522838C152F32410025AB02 /* Build configuration list for PBXProject "RON" */;
@@ -252,6 +303,12 @@
 			files = (
 				B582B5AE15342EB200E255B0 /* EMKRONSerialization.m in Sources */,
 				B582B5AF15342EB200E255B0 /* main.m in Sources */,
+				B56C0BC11594A268002AB0C3 /* EMKRONStreamParser.m in Sources */,
+				B56C0BC51594A2BC002AB0C3 /* EMKRONStreamWriter.m in Sources */,
+				B5FF63FB159629A900FAC317 /* EMKToken.m in Sources */,
+				B57DC6DA1596574700CA0150 /* EMKUTF8StreamScanner.m in Sources */,
+				B5BDE1FE15A85677009F5C99 /* EMKUTF8StreamScanner+RONScalarMatching.m in Sources */,
+				82C3446D1647D63000268992 /* EMKRONConstants.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,8 +316,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B56C0BCA1594A622002AB0C3 /* EMKRONStreamParser.m in Sources */,
+				B56C0BCB1594A622002AB0C3 /* EMKRONStreamWriter.m in Sources */,
 				B582B5A315342E0800E255B0 /* RONTest.m in Sources */,
 				B582B5B115342FD000E255B0 /* EMKRONSerialization.m in Sources */,
+				B5534C0A15987D59005A3DB2 /* EMKToken.m in Sources */,
+				B5534C0B15987D59005A3DB2 /* EMKUTF8StreamScanner.m in Sources */,
+				B5E166D115A59884006E6A1C /* EMKUTF8StreamScannerTest.m in Sources */,
+				B5BDE1FF15A85677009F5C99 /* EMKUTF8StreamScanner+RONScalarMatching.m in Sources */,
+				821BB292164A720500C3F1A6 /* EMKRONConstants.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,6 +406,7 @@
 		B582B5A515342E0800E255B0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "RONTest/RONTest-Prefix.pch";
@@ -354,6 +419,7 @@
 		B582B5A615342E0800E255B0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "RONTest/RONTest-Prefix.pch";

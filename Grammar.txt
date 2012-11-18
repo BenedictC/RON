@@ -1,0 +1,74 @@
+RON
+===
+document                    collection
+
+value                       scalar | collection
+
+collection                  array  | object
+scalar                      number | true | false | null | string
+
+newline                     '\n'
+whitespaceCharacters        ' ' | '\t'
+requiredWhitespace          whitespaceCharacters+
+optionalWhitespace          whitespaceCharacters?
+contextTerminal             '-'
+contextDelimiter            contextTerminal requiredWhitespace
+context                     newline optionalWhitespace contextDelimiter //new line followed by any number of tabs or spaces, terminated by an astrisk
+
+pairDelimiter               ':'
+
+array                       element+ | emptyElement
+emptyElement                context
+element                     context value
+
+object                      pair+ | emptyPair
+emptyPair                   context pairDelimiter
+pair                        context key pairDelimiter value
+key                         keyString | string
+keyString                   [a-z][.|a-z 0-9]* 
+
+number                      [+|-]?[0-9]+(\.[0-9]?)?(e[+|-]?[1-9][0-9]?)? //TODO: Can an exponential be a zero?
+null                        'null'          //case insensitive
+boolean                     true | false
+string                      strictString
+
+true                        'true'  | 'yes'	//case insensitive
+false                       'false' | 'no'	//case insensitive
+
+strictString                fixedDelimitedString | balancedDelimitedString | dynamicDelimitedString
+
+fixedDelimitedString        plainSingleQuotesString | plainDoubleQuotesString
+balancedDelimitedString     smartSingleQuotesString | smartDoubleQuotesString
+dynamicDelimitedString      squareBracketsString    | curleyBracketsString
+
+plainSingleQuotesString     ''' .* '''
+plainDoubleQuotesString     '"' .* '"'
+
+//the quotes are balanced. Any addition opening quotes are 'counted in' and closing quotes are 'counted out'
+//TODO: these definitions are incorrect
+smartSingleQuotesString     '‘' .* '’' 
+smartDoubleQuotesString     '“' .* '”'
+
+squareBracketsString        '[' squareBracketsString ']' | '[' .* ']'
+curleyBracketsString        '{' curleyBracketsString '}' | '{' .* '}'
+
+
+
+==================================================================
+
+Permissive string mode
+----------------------
+string                      strictString | lineBreakDelimitedString
+lineBreakDelimitedString   .*\n
+
+
+
+
+==================================================================
+
+Fragment parsing mode
+---------------------
+document                   value
+
+
+

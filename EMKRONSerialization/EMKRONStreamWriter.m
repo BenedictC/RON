@@ -263,7 +263,9 @@
 -(BOOL)writeNumber:(NSNumber *)number {
     if (![number isKindOfClass:[NSNumber class]]) return NO;
     
-    [self appendString:[number description]];
+    double value = [number doubleValue];
+    
+    [self appendString:[NSString stringWithFormat:@"%.20g", value]];
     return YES;
 }
 

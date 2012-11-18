@@ -155,13 +155,13 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
         if (storeToken([stream scanNumber])) continue;
         if (storeToken([stream scanNull])) continue;
         if (storeToken([stream scanBoolean])) continue;
-        if ([self.stream.buffer rangeOfString:@"eg+"].location != NSNotFound) {
-            static int count = 0;
-            if (count > 17) {
+//        if ([self.stream.buffer rangeOfString:@"],s"].location != NSNotFound) {
+//            static int count = 0;
+//            if (count > 0) {
 //                NSLog(@"%s", [self.stream.buffer UTF8String]);
-            }
-            count++;
-        }
+//            }
+//            count++;
+//        }
         if (storeToken([stream scanStrictString])) continue;
         
         if (shouldScanLinebreakDelimitedString && storeToken([stream scanLinebreakDelimitedString])) continue;

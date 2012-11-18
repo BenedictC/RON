@@ -81,7 +81,10 @@
 
     NSData *ronData = [NSData dataWithContentsOfFile:[@"/tmp/ron.txt" stringByExpandingTildeInPath]];
     id ronObjects = [EMKRONSerialization RONObjectWithData:ronData options:0 error:NULL];
-    STAssertEqualObjects(ronObjects, jsonObjects, @"ronObjects is nil");
+    
+    NSData *loopedJson = [NSJSONSerialization dataWithJSONObject:ronObjects options:0 error:NULL];
+    [loopedJson writeToFile:@"/tmp/ronLoop.json" atomically:NO];
+    STAssertEqualObjects(ronObjects, jsonObjects, @"ronObjects are not equal");
 }
 
 @end

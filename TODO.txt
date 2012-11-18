@@ -3,12 +3,6 @@ Features
 - Improve debugging output with a line and char position
 - Implement ron/main.m
 - Add parsing/writing options and methods from NSJSONSerialization
-- Replace NSScanner with a streaming scanner (the current implementation is sucky for large files)
+- Rebuild so it doesn't have potential to blow the stack
+- BUG: The keys true, false, no, yes, null, etc will fail, but shouldn't.
 
-
-Ideas (i.e. possible TODOs)
-===========================
-- Add =- to the grammar so that it can be used to underline words and create pseudo headings
-
-- Augment context terminator, -, with + to allow - in keys
-	- What does mark down use for lists items?

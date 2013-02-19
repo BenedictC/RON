@@ -1,0 +1,59 @@
+- "RON is JSON personable sibling. RON stands for Readable Object Notation. RON is a markup language which can represent the same data as JSON but is designed to be easy for humans to read and write."
+- "RON has 7 data types which fall into 2 categories; scalar values and collection values."
+
+    - scalars:
+        - number:
+            - Description: ""
+            - Examples:
+                -
+
+        - true:
+            - Description: "true is represented by the character sequences 'true' or 'yes'. It is case insensitive."
+            - Examples:
+                - yes
+                - YES
+                - Yes
+                - true
+                - TRUE
+                - True
+
+
+        - false:
+            - Description: "false is represented by the character sequences 'false' or 'no'. It is case insensitive."
+            - examples:
+                - no
+                - NO
+                - No
+                - false
+                - FALSE
+                - False
+
+        - null:
+            - Description: "null is represented by the character sequence 'null'. It is case insensitive."
+            - examples:
+                - null
+                - NULL
+                - Null
+    
+        - string:
+            - Description: "This is a second item in the same array. Notice that this string is delimited by single quotes and the previous item used double quotes. RON has 3 string syntaxes, each with 2 variants. There's also a permissive string parsing mode which allows strings to be unquoted."
+            - Examples:
+                - 'Single quotes'
+                - "Double quotes"
+                - ‘Single balanced quotes’
+                - “Double balanced quotes”
+                - {Curly counted quotes}
+                - [Square counted quotes]
+
+
+    - collections:
+        - array: ""
+        - object: ""
+
+//RON supports C style inline and block comments.
+/* Comments can be inserted anywhere except in collection indentation. */
+
+- "There are a few edge cases to watch out for when creating collections."
+        - "Empty collections": "TODO: explain the empty collection syntax"
+        - "Consecutive child collections": "TODO: explain the empty element syntax for preventing concatination of child collections"
+

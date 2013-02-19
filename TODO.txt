@@ -1,8 +1,26 @@
+Bugs
+====
+
+
+
 Features
 ========
-- Improve debugging output with a line and char position
+MVP
+---
 - Implement ron/main.m
-- Add parsing/writing options and methods from NSJSONSerialization
-- Rebuild so it doesn't have potential to blow the stack
-- BUG: The keys true, false, no, yes, null, etc will fail, but shouldn't.
 
+
+Debugging
+---------
+- Added check for mixed whitespace type in contexts
+- Improve debugging output with a line and char position
+
+
+NSJSONSerialization feature parity
+----------------------------------
+- Add parsing/writing options and methods from NSJSONSerialization
+
+
+One day
+-------
+- Rebuild so it doesn't have potential to blow the stack

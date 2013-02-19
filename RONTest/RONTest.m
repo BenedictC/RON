@@ -15,8 +15,7 @@
 
 @implementation RONTest
 
-//This is a very coarse unit test (it's almost and integration test). We could/(should?) test
-//the individual methods of EMKRONSerialization but:
+//This is a very coarse test (it's almost and integration test). We could/(should?) test the individual methods of EMKRONSerialization but:
 //1. The 'interesting' methods of EMKRONSerialization are private
 //2. This approach has been affective
 - (void)disabled_testJSONCorpus {
@@ -43,48 +42,73 @@
         STAssertTrue(isJsonObjectsValid, @"%@ does not contain valid JSON", jsonFilename);        
         if (!isJsonObjectsValid) continue;
         
-        //Loop the RON data
+        //Save the objects as RON
         NSData *ronData = [EMKRONSerialization dataWithRONObject:jsonObjects options:0 error:NULL];
         [ronData writeToFile:[@"/tmp/ron.txt" stringByExpandingTildeInPath] atomically:YES];
+        
+        //Load the objects from RON
         id ronObjects  = [EMKRONSerialization RONObjectWithData:ronData options:0 error:NULL];
         
+        //Compare the JSON and RON objects (do so in such that it doesn't log the objects).
         //if the RON objects don't match the JSON objects then we may have found a RON bug
         BOOL isJsonEqualToRon = [jsonObjects isEqual:ronObjects];
-        STAssertTrue(isJsonEqualToRon, @"%@ failed.", jsonFilename /*, [NSString stringWithFormat:@"%s", [ronData bytes]]*/);                
-        
-        //Figure out what to do when a test fails
-        if (!isJsonEqualToRon) {
-//            [ronObjects EMK_logDifferences:jsonObjects];
-//            NSData *faultyJsonObjectsData = [NSJSONSerialization dataWithJSONObject:ronObjects options:0 error:NULL];
-//            [faultyJsonObjectsData writeToFile:@"/Volumes/Users/ben/faultyRonObjects.json" atomically:YES];
-            
-            //TODO: set this to $(BUILD_PRODUCTS) using an enivornment var
-            //    NSString *failedRonDataDirectory = @"/Volumes/Users/ben/";            
-//            //TODO: On failure write RON data to BUILD_PRODUCTS and include failure line number & position in title.
-//            int lineNumber, charNumber;
-//            NSString *failedRonDataFilename = [NSString stringWithFormat:@"%@ (failed at %i, %i).ron", jsonFilename, lineNumber, charNumber];            
-//            NSString *failedRonDataPath     = [failedRonDataDirectory stringByAppendingPathComponent:ronFilename];
-//            [ronData writeToFile:failedRonDataPath atomically:NO];
-        }
+        STAssertTrue(isJsonEqualToRon, @"%@ failed.", jsonFilename /*, [NSString stringWithFormat:@"%s", [ronData bytes]]*/);                        
     }
 }
 
 
 
-- (void)testRONFile {
+- (void)disabled_testJSONFile {
+    
     NSString *corpusPath = [[[NSProcessInfo processInfo] environment] objectForKey:@"JSON_TEST_CORPUS_PATH"];    
     NSString *path = [corpusPath stringByAppendingPathComponent:@"sample.json"];
+    
+    //Load objects from JSON
     NSData *jsonData = [NSData dataWithContentsOfFile:path];
     id jsonObjects = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:NULL];
-    [[NSJSONSerialization dataWithJSONObject:jsonObjects options:0 error:NULL] writeToFile:@"/tmp/looped.json" atomically:YES];
+    
+    //Save objects to RON
     [[EMKRONSerialization dataWithRONObject:jsonObjects options:0 error:NULL] writeToFile:@"/tmp/ron.txt" atomically:YES];
 
+    //Load objects from RON
     NSData *ronData = [NSData dataWithContentsOfFile:[@"/tmp/ron.txt" stringByExpandingTildeInPath]];
     id ronObjects = [EMKRONSerialization RONObjectWithData:ronData options:0 error:NULL];
-    
-    NSData *loopedJson = [NSJSONSerialization dataWithJSONObject:ronObjects options:0 error:NULL];
-    [loopedJson writeToFile:@"/tmp/ronLoop.json" atomically:NO];
+
+    //Compare JSON and RON objects
     STAssertEqualObjects(ronObjects, jsonObjects, @"ronObjects are not equal");
+    
+    //Save RON objects as JSON (so we can compare them in a text editor)
+//    NSData *loopedJson = [NSJSONSerialization dataWithJSONObject:ronObjects options:0 error:NULL];
+//    [loopedJson writeToFile:@"/tmp/ronLoop.json" atomically:NO];
+}
+
+
+
+- (void)testRONCorpus {
+    NSString *corpusPath = [[[NSProcessInfo processInfo] environment] objectForKey:@"RON_TEST_CORPUS_PATH"];
+    NSError *error;
+    NSArray *corpusFilenames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:corpusPath error:&error];
+    if (corpusFilenames == nil) STFail(@"Error reading test corpus: %@", error);
+    
+    
+    for (NSString *ronFilename in corpusFilenames) {
+        //we're only interested in .ron files
+        if (![[ronFilename pathExtension] isEqualToString:@"ron"]) continue;
+        
+        //log the test subject
+        NSLog(@"Testing %@", ronFilename);
+        
+        //Load JSON object (we use the object to feed create the RON data and verify RON output)
+        NSString *path = [corpusPath stringByAppendingPathComponent:ronFilename];
+        NSData *ronData = [NSData dataWithContentsOfFile:path];
+        id ronObjects = [EMKRONSerialization RONObjectWithData:ronData options:0 error:NULL];
+        NSLog(@"%@", ronObjects);
+        STAssertNotNil(ronObjects, @"Failed to created RON objects.");
+
+//        NSOutputStream *stream = [NSOutputStream outputStreamToFileAtPath:[@"~/ronloop.json" stringByExpandingTildeInPath] append:NO];
+//        [stream open];
+//        [NSJSONSerialization writeJSONObject:ronObjects toStream:stream options:0 error:NULL];        
+    }
 }
 
 @end

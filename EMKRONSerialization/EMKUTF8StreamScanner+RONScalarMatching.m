@@ -152,7 +152,7 @@
         || [self scanString:YES_TOKEN caseInsensitive:YES intoString:&scannedString]) {
         
         if ([self lookAheadForWhitespaceOrEndOfStream]) {
-            return [EMKToken tokenWithType:EMKRONBooleanType value:[NSNumber numberWithBool:YES]];
+            return [EMKToken tokenWithType:EMKRONBooleanType value:[NSNumber numberWithBool:YES] sourceText:scannedString];
         } else {
             //put back the scanned string because it was a false-positive
             [self unread:scannedString];
@@ -172,7 +172,7 @@
  * @see 
  *
  * @param
- * @param 
+ * @param
  * @return
  */
 -(EMKToken *)scanFalse {
@@ -182,7 +182,7 @@
         || [self scanString:NO_TOKEN caseInsensitive:YES intoString:&scannedString]) {
      
         if ([self lookAheadForWhitespaceOrEndOfStream]) {
-            return [EMKToken tokenWithType:EMKRONBooleanType value:[NSNumber numberWithBool:NO]];
+            return [EMKToken tokenWithType:EMKRONBooleanType value:[NSNumber numberWithBool:NO] sourceText:nil];
         } else {
             //put back the scanned string because it was a false-positive
             [self unread:scannedString];
@@ -213,7 +213,7 @@
     if ([self scanString:NULL_TOKEN caseInsensitive:YES intoString:&scannedString]) {
         
         if ([self lookAheadForWhitespaceOrEndOfStream]) {
-            return [EMKToken tokenWithType:EMKRONNullType value:[NSNull null]];
+            return [EMKToken tokenWithType:EMKRONNullType value:[NSNull null]  sourceText:scannedString];
         } else {
             //put back the scanned string because it was a false-positive
             [self unread:scannedString];
@@ -283,10 +283,10 @@
     };
     
     BOOL didScanString = scanFixedDelimitedString(STRAIGHT_SINGLE_QUOTE_TOKEN);
-    if (didScanString) return [EMKToken tokenWithType:EMKRONStringType value:result];;
+    if (didScanString) return [EMKToken tokenWithType:EMKRONStringType value:result sourceText:result]; //TODO: Should sourceText include the quotes?
     
     didScanString = scanFixedDelimitedString(STRAIGHT_DOUBLE_QUOTE_TOKEN);
-    if (didScanString) return [EMKToken tokenWithType:EMKRONStringType value:result];;
+    if (didScanString) return [EMKToken tokenWithType:EMKRONStringType value:result sourceText:result]; //TODO: Should sourceText include the quotes?
 
     return nil;
 }
@@ -341,10 +341,10 @@
     };
     
     BOOL didScanString = scanBalancedDelimitedString(OPENING_SMART_SINGLE_QUOTE_TOKEN, CLOSING_SMART_SINGLE_QUOTE_TOKEN);
-    if (didScanString) return [EMKToken tokenWithType:EMKRONStringType value:result];
+    if (didScanString) return [EMKToken tokenWithType:EMKRONStringType value:result sourceText:result]; //TODO: Should sourceText include the quotes?
     
     didScanString = scanBalancedDelimitedString(OPENING_SMART_DOUBLE_QUOTE_TOKEN, CLOSING_SMART_DOUBLE_QUOTE_TOKEN);
-    if (didScanString) return [EMKToken tokenWithType:EMKRONStringType value:result];
+    if (didScanString) return [EMKToken tokenWithType:EMKRONStringType value:result sourceText:result]; //TODO: Should sourceText include the quotes?
     
     return nil;
 }
@@ -386,10 +386,10 @@
     };
     
     BOOL didScanString = scanDynamicDelimitedString(OPENING_SQUARE_BRACE_TOKEN, CLOSING_SQUARE_BRACE_TOKEN);
-    if (didScanString) return [EMKToken tokenWithType:EMKRONStringType value:result];
+    if (didScanString) return [EMKToken tokenWithType:EMKRONStringType value:result sourceText:result]; //TODO: Should sourceText include the quotes?
     
     didScanString = scanDynamicDelimitedString(OPENING_CURLY_BRACE_TOKEN, CLOSING_CURLY_BRACE_TOKEN);
-    if (didScanString) return [EMKToken tokenWithType:EMKRONStringType value:result];
+    if (didScanString) return [EMKToken tokenWithType:EMKRONStringType value:result sourceText:result]; //TODO: Should sourceText include the quotes?
 
     return nil;
 }
@@ -408,7 +408,7 @@
 -(EMKToken *)scanLinebreakDelimitedString {
     NSString *scannedString;
     if ([self scanUpToString:NEW_LINE_TOKEN caseInsensitive:YES intoString:&scannedString]) {
-        return [EMKToken tokenWithType:EMKRONStringType value:scannedString];
+        return [EMKToken tokenWithType:EMKRONStringType value:scannedString sourceText:scannedString];
     }
     
     //TODO: What about end of file?
@@ -497,11 +497,11 @@
             if (shouldReturnDouble) {
                 double result;
                 sscanf([numberString UTF8String], "%lf", &result);
-                return [EMKToken tokenWithType:EMKRONNumberType value:[NSNumber numberWithDouble:result]];
+                return [EMKToken tokenWithType:EMKRONNumberType value:[NSNumber numberWithDouble:result] sourceText:numberString];
             } else {
                 NSInteger result;
                 sscanf([numberString UTF8String], "%li", &result);
-                return [EMKToken tokenWithType:EMKRONNumberType value:[NSNumber numberWithDouble:result]];
+                return [EMKToken tokenWithType:EMKRONNumberType value:[NSNumber numberWithDouble:result] sourceText:numberString];
             }        
             
         } else {
@@ -554,7 +554,7 @@
             }
 
             NSNumber *value = [NSNumber numberWithLong:contextSize];
-            return [EMKToken tokenWithType:EMKRONContextType value:value];
+            return [EMKToken tokenWithType:EMKRONContextType value:value sourceText:possibleContext];
         } else if (didScanLinePrefixWhitespace) {
              //What we scanned wasn't a context, it was plain white space
             [scannedWhitespace appendString:possibleContext];
@@ -585,9 +585,10 @@
     if (![self scanCharactersFromSet:[NSCharacterSet letterCharacterSet] intoString:&openingLetter]) return nil;
     
     NSString *body;
-    if (![self scanCharactersFromSet:[NSCharacterSet alphanumericCharacterSet] intoString:&body]) return [EMKToken tokenWithType:EMKRONKeyType value:openingLetter];
+    if (![self scanCharactersFromSet:[NSCharacterSet alphanumericCharacterSet] intoString:&body]) return [EMKToken tokenWithType:EMKRONKeyType value:openingLetter sourceText:openingLetter];
     
-    return [EMKToken tokenWithType:EMKRONKeyType value:[openingLetter stringByAppendingString:body]];
+    NSString *result = [openingLetter stringByAppendingString:body];
+    return [EMKToken tokenWithType:EMKRONKeyType value:result sourceText:result];
 }
 
 
@@ -606,7 +607,7 @@
     BOOL didScan = [self scanString:PAIR_DELIMITER_TOKEN caseInsensitive:YES intoString:NULL];
     
     if (didScan) {
-        return [EMKToken tokenWithType:EMKRONPairDelimiterType value:PAIR_DELIMITER_TOKEN];
+        return [EMKToken tokenWithType:EMKRONPairDelimiterType value:PAIR_DELIMITER_TOKEN sourceText:PAIR_DELIMITER_TOKEN];
     }
     
     [self unread:whitespace];

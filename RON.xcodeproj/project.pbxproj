@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		821BB292164A720500C3F1A6 /* EMKRONConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 82C3446C1647D63000268992 /* EMKRONConstants.m */; };
+		82B14FA1165A30BD00C7365F /* RON test corpus in Resources */ = {isa = PBXBuildFile; fileRef = 82B14FA0165A30BD00C7365F /* RON test corpus */; };
 		82C3446D1647D63000268992 /* EMKRONConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 82C3446C1647D63000268992 /* EMKRONConstants.m */; };
 		B5228397152F32420025AB02 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5228396152F32420025AB02 /* Foundation.framework */; };
 		B5534C0A15987D59005A3DB2 /* EMKToken.m in Sources */ = {isa = PBXBuildFile; fileRef = B5FF63FA159629A900FAC317 /* EMKToken.m */; };
@@ -43,6 +44,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		82B14FA0165A30BD00C7365F /* RON test corpus */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "RON test corpus"; sourceTree = "<group>"; };
 		82C344671647BF7E00268992 /* EMKRONTokensAndTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMKRONTokensAndTypes.h; sourceTree = "<group>"; };
 		82C3446C1647D63000268992 /* EMKRONConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMKRONConstants.m; sourceTree = "<group>"; };
 		B5228392152F32420025AB02 /* RON */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RON; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -150,6 +152,7 @@
 				B582B5A215342E0800E255B0 /* RONTest.m */,
 				B5E166CF15A59884006E6A1C /* EMKUTF8StreamScannerTest.h */,
 				B5E166D015A59884006E6A1C /* EMKUTF8StreamScannerTest.m */,
+				82B14FA0165A30BD00C7365F /* RON test corpus */,
 				B582B5B51534301800E255B0 /* JSON test corpus */,
 				B5228395152F32420025AB02 /* Frameworks */,
 				B582B59C15342E0800E255B0 /* Supporting Files */,
@@ -275,6 +278,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B582B5A015342E0800E255B0 /* InfoPlist.strings in Resources */,
+				82B14FA1165A30BD00C7365F /* RON test corpus in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

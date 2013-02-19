@@ -13,9 +13,10 @@
 
 
 @interface EMKToken : NSObject
--(id)initWithTokenType:(NSInteger)type value:(id)value;
+-(id)initWithTokenType:(NSInteger)type value:(id)value sourceText:(NSString *)sourceText;
 @property(readonly, nonatomic) NSInteger type;
 @property(readonly, nonatomic) id value;
+@property(readonly, nonatomic) NSString *sourceText;
 
-+(id)tokenWithType:(NSInteger)type value:(id)value;
++(id)tokenWithType:(NSInteger)type value:(id)value sourceText:(NSString *)sourceText;
 @end

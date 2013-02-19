@@ -14,19 +14,20 @@
 
 
 
--(id)initWithTokenType:(NSInteger)type value:(id)value {
+-(id)initWithTokenType:(NSInteger)type value:(id)value sourceText:(NSString *)sourceText {
     self = [super init];
     if (self != nil) {
         _type = type;
         _value = value;
+        _sourceText = [sourceText copy];
     }
     return self;
 }
 
 
 
-+(id)tokenWithType:(NSInteger)type value:(id)value {
-    return [[self alloc] initWithTokenType:type value:value];
++(id)tokenWithType:(NSInteger)type value:(id)value sourceText:(NSString *)sourceText {
+    return [[self alloc] initWithTokenType:type value:value sourceText:sourceText];
 }
 
 

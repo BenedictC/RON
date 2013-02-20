@@ -9,9 +9,10 @@
 #import "EMKRONStreamParser.h"
 
 
-#import "EMKUTF8StreamScanner+RONScalarMatching.h"
+#import "EMKUTF8StreamScanner+RONTokenizer.h"
 #import "EMKRONTokensAndTypes.h"
 #import "EMKToken.h"
+
 
 
 #pragma mark - context function
@@ -29,12 +30,6 @@ static EMKRONContextTokenComparisonResult compareContextTokens(EMKToken *referen
     if (contextToken == nil          || contextToken.type != EMKRONContextType)           return EMKRONContextTokenIsInvalid;
     
     return ([referenceContextToken.value compare:contextToken.value]);
-}
-
-
-
-static EMKToken * reinturpretTokenAsString(EMKToken *token) {
-    return [EMKToken tokenWithType:EMKRONStringType value:token.sourceText sourceText:token.sourceText];
 }
 
 
@@ -128,24 +123,24 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
         [self.tokenQueue removeObjectAtIndex:0];
     }
         
-    EMKRONTypes type = token.type;
-    NSString *typeDescription = (type == EMKRONNumberType)        ? @"EMKRONNumberType" :
-    (type == EMKRONNullType)          ? @"EMKRONNullType" :
-    (type == EMKRONBooleanType)       ? @"EMKRONBooleanType" :
-    (type == EMKRONStringType)        ? @"EMKRONStringType" :
-    
-    //Structural types (i.e. not data, but explicitly stated in the input stream)
-    (type == EMKRONContextType)       ? @"EMKRONContextType" :
-    (type == EMKRONKeyType)           ? @"EMKRONKeyType" :
-    (type == EMKRONPairDelimiterType) ? @"EMKRONPairDelimiterType" :
-    
-    //Pseudo/implied types
-    (type == EMKRONArrayOpenType)     ? @"EMKRONArrayOpenType" :
-    (type == EMKRONArrayCloseType)    ? @"EMKRONArrayCloseType" :
-    (type == EMKRONObjectOpenType)    ? @"EMKRONObjectOpenType" :
-    (type == EMKRONObjectCloseType)   ? @"EMKRONObjectCloseType" :
-    @"INVALID TOKEN TYPE";
-    
+//    EMKRONTypes type = token.type;
+//    NSString *typeDescription = (type == EMKRONNumberType)        ? @"EMKRONNumberType" :
+//    (type == EMKRONNullType)          ? @"EMKRONNullType" :
+//    (type == EMKRONBooleanType)       ? @"EMKRONBooleanType" :
+//    (type == EMKRONStringType)        ? @"EMKRONStringType" :
+//    
+//    //Structural types (i.e. not data, but explicitly stated in the input stream)
+//    (type == EMKRONContextType)       ? @"EMKRONContextType" :
+//    (type == EMKRONKeyType)           ? @"EMKRONKeyType" :
+//    (type == EMKRONPairDelimiterType) ? @"EMKRONPairDelimiterType" :
+//    
+//    //Pseudo/implied types
+//    (type == EMKRONArrayOpenType)     ? @"EMKRONArrayOpenType" :
+//    (type == EMKRONArrayCloseType)    ? @"EMKRONArrayCloseType" :
+//    (type == EMKRONObjectOpenType)    ? @"EMKRONObjectOpenType" :
+//    (type == EMKRONObjectCloseType)   ? @"EMKRONObjectCloseType" :
+//    @"INVALID TOKEN TYPE";
+//    
 //    NSLog(@"<%@ %p: type = %@; value = %@>", NSStringFromClass([token class]), token,  typeDescription, token.value);
     return token;
 }
@@ -201,6 +196,31 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
     }
 
     return YES;
+}
+
+
+
+-(BOOL)matchTokens:(EMKRONTypes)tokenTypes, ... {
+    va_list ap;    
+    va_start(ap, tokenTypes);
+    EMKRONTypes tokenType = tokenTypes;
+    
+    BOOL didMatch = NO;
+    //Note that the exit condition is not related to tokenIndex. It's odd, but better than
+    //having to prepare the for the next iteration of the loop inside the loop body
+    for (NSInteger tokenIndex = 0; tokenType != EMKRONSentinalType; tokenIndex++, tokenType = va_arg(ap, EMKRONTypes)) {
+
+        EMKToken *token = [self lookAtTokenAtIndex:tokenIndex];
+
+        if (token == nil) goto exit;
+        if (token.type != tokenTypes) goto exit;        
+    }
+    
+    didMatch = YES;
+    
+    exit:
+    va_end(ap);
+    return didMatch;
 }
 
 
@@ -265,7 +285,7 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
 
     EMKToken *keyOrStringOrPairDelimiterToken = [self lookAtTokenAtIndex:1];
     if (keyOrStringOrPairDelimiterToken == nil) return nil; //TODO: Why?
-    
+        
     if (keyOrStringOrPairDelimiterToken.type == EMKRONKeyType) {
         
         EMKToken *pairDelimiterToken = [self lookAtTokenAtIndex:2];
@@ -350,7 +370,7 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
     }
     
     //it's a normal pair
-    EMKToken *keyToken = reinturpretTokenAsString(keyOrPairDelimiter);
+    EMKToken *keyToken = reinturpretTokenAsKey(keyOrPairDelimiter); //TODO: Why is this needed?
     if (keyToken != nil) {
         [self consumeNextToken]; //consume the key
         EMKToken *pairDelimiterToken = [self consumeNextToken];
@@ -384,11 +404,13 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
 -(NSArray *)parseArray {
     //check the stream is an array
     EMKToken *referenceContextToken = [self lookAtTokenAtIndex:0];
-    if (referenceContextToken == nil || referenceContextToken.type != EMKRONContextType) return nil;
+//    if (referenceContextToken == nil || referenceContextToken.type != EMKRONContextType) return nil;
+    if (![self matchTokens:EMKRONContextType, EMKRONSentinalType]) return nil;
     
     //From now on we throw an exception if the stream doesn't make sense
     NSMutableArray *array = [NSMutableArray array];
     
+
     id value;
     while ([self parseArrayElementMatchingReferenceContext:referenceContextToken value:&value]) {
         if (value == nil) continue;

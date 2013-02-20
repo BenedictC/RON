@@ -16,6 +16,3 @@
 -(id)initWithStream:(NSInputStream *)stream parseMode:(EMKRONReadingOptions)parseMode;
 -(id)parse:(NSError *__autoreleasing *)error;
 @end
-
-
-

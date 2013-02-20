@@ -10,37 +10,66 @@
 
 #import "EMKRONSerialization.h"
 
-int main(int argc, const char * argv[])
-{
 
-    @autoreleasepool 
-    {
-        //Read
-        NSString *ronPath = [[[NSProcessInfo processInfo] arguments] objectAtIndex:1];
-        
-        NSInputStream *inStream = [NSInputStream inputStreamWithFileAtPath:ronPath];
-        [inStream open];
-        NSError *error;
-        id objects = [EMKRONSerialization RONObjectWithStream:inStream options:0 error:&error];
-        if (objects == nil) {
-            fprintf(stderr, "%s", [[error localizedDescription] UTF8String]);
-        }
-        
-        //Write
-        NSData *json = [NSJSONSerialization dataWithJSONObject:objects options:0 error:&error];
-        if (json == nil) {
-            fprintf(stderr, "%s", [[error localizedDescription] UTF8String]);
-        }
 
-        fprintf(stdout, "%s", [[[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding] UTF8String]);
-        
-        //TODO: 
-        // Implicition conversions
-        // JSON -> RON
-        // RON  -> JSON
-        //
-        // - Add switches for explict conversion
+BOOL convertRonToJson(NSString *ronPath) {
+    //Read
+    NSInputStream *inStream = [NSInputStream inputStreamWithFileAtPath:ronPath];
+    [inStream open];
+    NSError *error;
+    id objects = [EMKRONSerialization RONObjectWithStream:inStream options:0 error:&error];
+    if (objects == nil) {
+        fprintf(stderr, "%s", [[error localizedDescription] UTF8String]);
+        return NO;        
     }
-    return 0;
+    
+    //Write
+    NSData *json = [NSJSONSerialization dataWithJSONObject:objects options:0 error:&error];
+    if (json == nil) {
+        fprintf(stderr, "%s", [[error localizedDescription] UTF8String]);
+        return NO;        
+    }
+    
+    fprintf(stdout, "%s", [[[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding] UTF8String]);
+    return YES;
 }
+
+
+
+BOOL convertJsonToRon(NSString *jsonPath) {
+    //Read
+    NSInputStream *inStream = [NSInputStream inputStreamWithFileAtPath:jsonPath];
+    [inStream open];
+    NSError *error;
+    id objects = [NSJSONSerialization JSONObjectWithStream:inStream options:0 error:&error];
+    if (objects == nil) {
+        fprintf(stderr, "%s", [[error localizedDescription] UTF8String]);
+        return NO;
+    }
+    
+    //Write
+    NSData *ron = [EMKRONSerialization dataWithRONObject:objects options:0 error:&error];
+    if (ron == nil) {
+        fprintf(stderr, "%s", [[error localizedDescription] UTF8String]);
+        return NO;        
+    }
+    
+    fprintf(stdout, "%s", [[[NSString alloc] initWithData:ron encoding:NSUTF8StringEncoding] UTF8String]);
+    return YES;
+}
+
+
+
+int main(int argc, const char * argv[]){
+
+    @autoreleasepool {
+        NSString *inputPath = [[[NSProcessInfo processInfo] arguments] objectAtIndex:1];
+        
+        if (convertRonToJson(inputPath)) return 0;
+        if (convertJsonToRon(inputPath)) return 0;
+    }
+    return 1;
+}
+
+
 

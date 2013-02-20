@@ -260,42 +260,24 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
 #pragma mark collection parsing
 -(NSDictionary *)parseObject {
     //check the stream is an object
-    EMKToken *referenceContextToken = [self lookAtTokenAtIndex:0];
-    if (referenceContextToken == nil || referenceContextToken.type != EMKRONContextType) return nil;
-    
-    EMKToken *keyOrStringOrPairDelimiterToken = [self lookAtTokenAtIndex:1];
-    if (keyOrStringOrPairDelimiterToken == nil) return nil; //TODO: Why?
-    
-    if (keyOrStringOrPairDelimiterToken.type == EMKRONKeyType) {
-        
-        EMKToken *pairDelimiterToken = [self lookAtTokenAtIndex:2];
-        //We're not in an object (probably an array)
-        if (pairDelimiterToken.type != EMKRONPairDelimiterType) return nil;
-        
-    } else if (keyOrStringOrPairDelimiterToken.type == EMKRONStringType) {
-        
-        EMKToken *pairDelimiterToken = [self lookAtTokenAtIndex:2];
-        //We're not in an object (probably an array)
-        if (pairDelimiterToken.type != EMKRONPairDelimiterType) return nil;
-        
-    } else if (keyOrStringOrPairDelimiterToken.type == EMKRONPairDelimiterType) {
-        //We're definitly in an object
-    } else {
-        //It's not a match
-        return nil;
-    }
+    if (![self matchTokens:EMKRONContextType, EMKRONKeyType,    EMKRONPairDelimiterType, EMKRONSentinalType] &&
+        ![self matchTokens:EMKRONContextType, EMKRONStringType, EMKRONPairDelimiterType, EMKRONSentinalType] &&
+        ![self matchTokens:EMKRONContextType, EMKRONPairDelimiterType, EMKRONSentinalType]) return nil;
+
     
     //From now on we throw an exception if the stream doesn't make sense
     NSMutableDictionary *object = [NSMutableDictionary dictionary];
-    
+
+    EMKToken *referenceContextToken = [self lookAtNextToken];
     NSString *key;
     id value;
     while ([self parseObjectPairMatchingReferenceContext:referenceContextToken key:&key value:&value]) {
-        if (value == nil) continue;
-        [object setObject:value forKey:key];
-        //        NSLog(@"setObjectForKey: %@", key);
+        if (value != nil) { //Watch out for empty pairs
+            [object setObject:value forKey:key];
+//            NSLog(@"setObjectForKey: %@", key);
+        }
     }
-    
+
     return [object copy];
 }
 
@@ -306,95 +288,80 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
     *outKey = nil;
     *outValue = nil;
     
+    //Check the context is valid
     EMKToken *contextToken = [self lookAtNextToken];
-    EMKRONContextTokenComparisonResult tokenComparison = compareContextTokens(referenceContextToken, contextToken);
-    
-    if (tokenComparison == EMKRONReferenceContextTokenIsInvalid) {
-        //TODO: Figure out where the error is in the input stream.
-        RAISE_PARSING_EXCEPTION(@"Invalid data in object at <???>");
-        return NO;
-    }
-    
-    if (tokenComparison == EMKRONContextTokenIsInvalid) {
-        if (contextToken != nil) {
+    switch (compareContextTokens(referenceContextToken, contextToken)) {
+        case EMKRONReferenceContextTokenIsInvalid:
             //TODO: Figure out where the error is in the input stream.
             RAISE_PARSING_EXCEPTION(@"Invalid data in object at <???>");
+            return NO;
+            
+        case EMKRONContextTokenIsInvalid:
+            if (contextToken != nil) {
+                //TODO: Figure out where the error is in the input stream.
+                RAISE_PARSING_EXCEPTION(@"Invalid data in object at <???>");
+            }
+            return NO;
+            
+        case EMKRONContextTokenIsChild: {
+            //TODO: Figure out where the error is in the input stream.
+            RAISE_PARSING_EXCEPTION(@"Invalid indentation in object at <???>");
+            return NO;
+
         }
-        return NO;
+            
+        case EMKRONContextTokenIsParent:
+            return NO;
+            
+        case EMKRONContextTokenIsSibling:
+            [self consumeNextToken]; //the context is valid, consume it.
+            break;
     }
     
-    if (tokenComparison == EMKRONContextTokenIsChild) {
-        //TODO: Figure out where the error is in the input stream.
-        RAISE_PARSING_EXCEPTION(@"Invalid indentation in object at <???>");
-        return NO;
+    //Is it an empty pair?
+    if ([self matchTokens:EMKRONPairDelimiterType, EMKRONSentinalType]) {
+        [self consumeNextToken]; //consume the delimiter
+        return YES;
     }
     
-    if (tokenComparison == EMKRONContextTokenIsParent) {
-        return NO;
-    }
-    
-    [self consumeNextToken]; //the token is valid - consume it and move on to the key.
-    
-    //is the pair likely to be valid?
-    EMKToken *keyOrPairDelimiter = [self lookAtNextToken];
-    if (keyOrPairDelimiter == nil) {
+    //is the pair valid?
+    EMKRONTypes validKeyStringTypes = EMKRONKeyType | EMKRONStringType | EMKRONNullType | EMKRONBooleanType;
+    if (![self matchTokens:validKeyStringTypes, EMKRONPairDelimiterType, EMKRONSentinalType]) {
         //TODO: Figure out where the error is in the input stream.
         RAISE_PARSING_EXCEPTION(@"Expected key or pair delimiter but found ??? at <???>");
         return NO;
     }
     
-    //it's an empty pair
-    if (keyOrPairDelimiter.type == EMKRONPairDelimiterType) {
-        [self consumeNextToken]; //consume the delimiter
-        return YES;
+    EMKToken *keyToken = reinturpretTokenAsKey([self consumeNextToken]);
+    [self consumeNextToken]; //consume the delimiter
+    id value = [self parseValue];
+    if (value == nil) {
+        //TODO: Figure out where the error is in the input stream.
+        RAISE_PARSING_EXCEPTION(@"No value for key at <???>");
+        return NO;
     }
-    
-    //it's a normal pair
-    EMKToken *keyToken = reinturpretTokenAsKey(keyOrPairDelimiter); //TODO: Why is this needed?
-    if (keyToken != nil) {
-        [self consumeNextToken]; //consume the key
-        EMKToken *pairDelimiterToken = [self consumeNextToken];
-        if (pairDelimiterToken == nil || pairDelimiterToken.type != EMKRONPairDelimiterType) {
-            //TODO: Figure out where the error is in the input stream.
-            RAISE_PARSING_EXCEPTION(@"Expected pair delimitter, but found ??? at <???>");
-            return NO;
-        }
         
-        id value = [self parseValue];
-        if (value == nil) {
-            //TODO: Figure out where the error is in the input stream.
-            RAISE_PARSING_EXCEPTION(@"No value for key at <???>");
-            return NO;
-        }
-        
-        //set the
-        *outKey = keyToken.value;
-        *outValue = value;
-        return YES;
-    }
-    
-    //It doesn't make sense!
-    //TODO: Figure out where the error is in the input stream.
-    RAISE_PARSING_EXCEPTION(@"No value for key at <???>");
-    return NO;
+    //set the output
+    *outKey = keyToken.value;
+    *outValue = value;
+    return YES;
 }
 
 
 
 -(NSArray *)parseArray {
     //check the stream is an array
-    EMKToken *referenceContextToken = [self lookAtTokenAtIndex:0];
-    //    if (referenceContextToken == nil || referenceContextToken.type != EMKRONContextType) return nil;
     if (![self matchTokens:EMKRONContextType, EMKRONSentinalType]) return nil;
     
     //From now on we throw an exception if the stream doesn't make sense
     NSMutableArray *array = [NSMutableArray array];
     
-    
+    EMKToken *referenceContextToken = [self lookAtNextToken];
     id value;
     while ([self parseArrayElementMatchingReferenceContext:referenceContextToken value:&value]) {
-        if (value == nil) continue;
-        [array addObject:value];
+        if (value != nil) { //Watch out for empty elements
+            [array addObject:value];
+        }
     }
     
     return [array copy];
@@ -405,42 +372,40 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
 -(BOOL)parseArrayElementMatchingReferenceContext:(EMKToken *)referenceContextToken value:(id __autoreleasing*)outValue {
     //reset the output arg
     *outValue = nil;
-    
+        
+    //Check the context is valid
     EMKToken *contextToken = [self lookAtNextToken];
-    EMKRONContextTokenComparisonResult tokenComparison = compareContextTokens(referenceContextToken, contextToken);
-    
-    if (tokenComparison == EMKRONReferenceContextTokenIsInvalid) {
-        //TODO: Figure out where the error is in the input stream.
-        RAISE_PARSING_EXCEPTION(@"Invalid data in object at <???>");
-        return NO;
-    }
-    
-    if (tokenComparison == EMKRONContextTokenIsInvalid) {
-        if (contextToken != nil) {
+    switch (compareContextTokens(referenceContextToken, contextToken)) {
+        case EMKRONReferenceContextTokenIsInvalid:
             //TODO: Figure out where the error is in the input stream.
             RAISE_PARSING_EXCEPTION(@"Invalid data in object at <???>");
-        }
-        return NO;
-    }
-    
-    //it's a child collection
-    if (tokenComparison == EMKRONContextTokenIsChild) {
-        id collection = [self parseCollection];
-        if (collection == nil) {
-            //TODO: Figure out where the error is in the input stream.
-            RAISE_PARSING_EXCEPTION(@"Invalid indentation in object at <???>");
             return NO;
+            
+        case EMKRONContextTokenIsInvalid:
+            if (contextToken != nil) {
+                //TODO: Figure out where the error is in the input stream.
+                RAISE_PARSING_EXCEPTION(@"Invalid data in object at <???>");
+            }
+            return NO;
+            
+        case EMKRONContextTokenIsChild: {
+            id collection = [self parseCollection];
+            if (collection == nil) {
+                //TODO: Figure out where the error is in the input stream.
+                RAISE_PARSING_EXCEPTION(@"Invalid indentation in object at <???>");
+                return NO;
+            }
+            *outValue = collection;
+            return YES;
         }
-        *outValue = collection;
-        return YES;
+            
+        case EMKRONContextTokenIsParent:
+            return NO;
+            
+        case EMKRONContextTokenIsSibling:
+            [self consumeNextToken]; //the context is valid, consume it.
+            break;
     }
-    
-    if (tokenComparison == EMKRONContextTokenIsParent) {
-        return NO;
-    }
-    
-    //The element is a sibling of the matches the reference context
-    [self consumeNextToken]; //the token is valid - consume it and move on to the value.
     
     //TODO: Check for empty
     //If the next token is a parent context then this element is empty
@@ -448,7 +413,7 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
     if (EMKRONContextTokenIsParent == compareContextTokens(contextToken, possibleParentContext)) {
         return YES;
     }
-    
+
     //It's a normal element
     id value = [self parseValue];
     if (value == nil) {

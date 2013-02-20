@@ -18,7 +18,7 @@
 //This is a very coarse test (it's almost and integration test). We could/(should?) test the individual methods of EMKRONSerialization but:
 //1. The 'interesting' methods of EMKRONSerialization are private
 //2. This approach has been affective
-- (void)disabled_testJSONCorpus {
+- (void)testJSONCorpus {
     NSString *corpusPath = [[[NSProcessInfo processInfo] environment] objectForKey:@"JSON_TEST_CORPUS_PATH"];
     NSError *error;
     NSArray *corpusFilenames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:corpusPath error:&error];
@@ -58,7 +58,7 @@
 
 
 
-- (void)disabled_testJSONFile {
+- (void)testJSONFile {
     
     NSString *corpusPath = [[[NSProcessInfo processInfo] environment] objectForKey:@"JSON_TEST_CORPUS_PATH"];    
     NSString *path = [corpusPath stringByAppendingPathComponent:@"sample.json"];

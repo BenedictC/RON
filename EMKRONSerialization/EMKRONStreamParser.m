@@ -176,13 +176,6 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
         if (storeToken([stream scanNumber])) continue;
         if (storeToken([stream scanNull])) continue;
         if (storeToken([stream scanBoolean])) continue;
-//        if ([self.stream.buffer rangeOfString:@"],s"].location != NSNotFound) {
-//            static int count = 0;
-//            if (count > 0) {
-//                NSLog(@"%s", [self.stream.buffer UTF8String]);
-//            }
-//            count++;
-//        }
         if (storeToken([stream scanStrictString])) continue;
         
         if (shouldScanLinebreakDelimitedString && storeToken([stream scanLinebreakDelimitedString])) continue;
@@ -213,7 +206,8 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
         EMKToken *token = [self lookAtTokenAtIndex:tokenIndex];
 
         if (token == nil) goto exit;
-        if (token.type != tokenTypes) goto exit;        
+        BOOL isTokenUninteresting = ((token.type & tokenType) == 0);
+        if (isTokenUninteresting) goto exit;
     }
     
     didMatch = YES;
@@ -240,25 +234,11 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
 
 
 
--(id)parseScalar {
-    EMKToken *token = [self lookAtNextToken];
-
-    if (token == nil) return nil;
+-(id)parseScalar {    
+    if (![self matchTokens:EMKRONNumberType | EMKRONNullType | EMKRONBooleanType | EMKRONStringType, EMKRONSentinalType]) return nil;
     
-    switch (token.type) {
-        case EMKRONNumberType:
-        case EMKRONNullType:
-        case EMKRONBooleanType:
-        case EMKRONStringType:
-            [self consumeNextToken];
-            return token.value;
-            break;
-            
-        default:
-            break;
-    }
-    
-    return nil;
+    EMKToken *token = [self consumeNextToken];
+    return token.value;
 }
 
 
@@ -282,10 +262,10 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
     //check the stream is an object
     EMKToken *referenceContextToken = [self lookAtTokenAtIndex:0];
     if (referenceContextToken == nil || referenceContextToken.type != EMKRONContextType) return nil;
-
+    
     EMKToken *keyOrStringOrPairDelimiterToken = [self lookAtTokenAtIndex:1];
     if (keyOrStringOrPairDelimiterToken == nil) return nil; //TODO: Why?
-        
+    
     if (keyOrStringOrPairDelimiterToken.type == EMKRONKeyType) {
         
         EMKToken *pairDelimiterToken = [self lookAtTokenAtIndex:2];
@@ -293,7 +273,7 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
         if (pairDelimiterToken.type != EMKRONPairDelimiterType) return nil;
         
     } else if (keyOrStringOrPairDelimiterToken.type == EMKRONStringType) {
-
+        
         EMKToken *pairDelimiterToken = [self lookAtTokenAtIndex:2];
         //We're not in an object (probably an array)
         if (pairDelimiterToken.type != EMKRONPairDelimiterType) return nil;
@@ -304,18 +284,18 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
         //It's not a match
         return nil;
     }
-
+    
     //From now on we throw an exception if the stream doesn't make sense
     NSMutableDictionary *object = [NSMutableDictionary dictionary];
-        
+    
     NSString *key;
     id value;
     while ([self parseObjectPairMatchingReferenceContext:referenceContextToken key:&key value:&value]) {
         if (value == nil) continue;
         [object setObject:value forKey:key];
-//        NSLog(@"setObjectForKey: %@", key);
+        //        NSLog(@"setObjectForKey: %@", key);
     }
-
+    
     return [object copy];
 }
 
@@ -352,9 +332,9 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
     if (tokenComparison == EMKRONContextTokenIsParent) {
         return NO;
     }
-
+    
     [self consumeNextToken]; //the token is valid - consume it and move on to the key.
-
+    
     //is the pair likely to be valid?
     EMKToken *keyOrPairDelimiter = [self lookAtNextToken];
     if (keyOrPairDelimiter == nil) {
@@ -362,7 +342,7 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
         RAISE_PARSING_EXCEPTION(@"Expected key or pair delimiter but found ??? at <???>");
         return NO;
     }
-
+    
     //it's an empty pair
     if (keyOrPairDelimiter.type == EMKRONPairDelimiterType) {
         [self consumeNextToken]; //consume the delimiter
@@ -404,13 +384,13 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
 -(NSArray *)parseArray {
     //check the stream is an array
     EMKToken *referenceContextToken = [self lookAtTokenAtIndex:0];
-//    if (referenceContextToken == nil || referenceContextToken.type != EMKRONContextType) return nil;
+    //    if (referenceContextToken == nil || referenceContextToken.type != EMKRONContextType) return nil;
     if (![self matchTokens:EMKRONContextType, EMKRONSentinalType]) return nil;
     
     //From now on we throw an exception if the stream doesn't make sense
     NSMutableArray *array = [NSMutableArray array];
     
-
+    
     id value;
     while ([self parseArrayElementMatchingReferenceContext:referenceContextToken value:&value]) {
         if (value == nil) continue;
@@ -458,17 +438,17 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
     if (tokenComparison == EMKRONContextTokenIsParent) {
         return NO;
     }
-
+    
     //The element is a sibling of the matches the reference context
-    [self consumeNextToken]; //the token is valid - consume it and move on to the value.    
-
+    [self consumeNextToken]; //the token is valid - consume it and move on to the value.
+    
     //TODO: Check for empty
     //If the next token is a parent context then this element is empty
     EMKToken *possibleParentContext = [self lookAtNextToken];
     if (EMKRONContextTokenIsParent == compareContextTokens(contextToken, possibleParentContext)) {
         return YES;
     }
-
+    
     //It's a normal element
     id value = [self parseValue];
     if (value == nil) {

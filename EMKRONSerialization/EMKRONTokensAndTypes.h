@@ -53,7 +53,9 @@ typedef enum : NSInteger {
     EMKRONArrayCloseType    = 1 << 9,
     EMKRONObjectOpenType    = 1 << 10,
     EMKRONObjectCloseType   = 1 << 11,
+    
+    //Combined types
+    EMKRONKeyTypes = EMKRONKeyStringType | EMKRONStringType | EMKRONNullType | EMKRONBooleanType,
 }  EMKRONTypes;
 
-const EMKRONTypes EMKRONKeyTypes = EMKRONKeyStringType | EMKRONStringType | EMKRONNullType | EMKRONBooleanType;
 

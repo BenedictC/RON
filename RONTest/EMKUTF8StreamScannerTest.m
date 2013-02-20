@@ -9,7 +9,7 @@
 #import "EMKUTF8StreamScannerTest.h"
 
 #import "EMKUTF8StreamScanner.h"
-#import "EMKUTF8StreamScanner+RONScalarMatching.h"
+#import "EMKUTF8StreamScanner+RONTokenizer.h"
 #import "EMKToken.h"
 
 

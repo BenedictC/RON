@@ -1,19 +1,16 @@
 //
-//  EMKUTF8StreamScanner+RONScalarMatching.m
+//  EMKUTF8StreamScanner+RONTokenizer.m
 //  RON
 //
 //  Created by Benedict Cohen on 07/07/2012.
 //  Copyright (c) 2012 Benedict Cohen. All rights reserved.
 //
 
-#import "EMKUTF8StreamScanner+RONScalarMatching.h"
-
-#import "EMKRONTokensAndTypes.h"
-#import "EMKToken.h"
+#import "EMKUTF8StreamScanner+RONTokenizer.h"
 
 
 
-@implementation EMKUTF8StreamScanner (RONScalarMatching)
+@implementation EMKUTF8StreamScanner (RONTokenizer)
 
 #pragma mark - white space handling
 /**

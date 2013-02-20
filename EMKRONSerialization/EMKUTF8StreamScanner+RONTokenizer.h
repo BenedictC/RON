@@ -1,5 +1,5 @@
 //
-//  EMKUTF8StreamScanner+RONScalarMatching.h
+//  EMKUTF8StreamScanner+RONTokenizer.h
 //  RON
 //
 //  Created by Benedict Cohen on 07/07/2012.
@@ -8,7 +8,8 @@
 
 #import "EMKUTF8StreamScanner.h"
 
-@class EMKToken;
+#import "EMKToken.h"
+#import "EMKRONTokensAndTypes.h"
 
 
 
@@ -21,7 +22,7 @@
  */
 
 
-@interface EMKUTF8StreamScanner (RONScalarMatching)
+@interface EMKUTF8StreamScanner (RONTokenizer)
 
 -(EMKToken *)scanNumber;
 -(EMKToken *)scanNull;
@@ -35,3 +36,9 @@
 -(EMKToken *)scanPairDelimiter;
 
 @end
+
+
+
+static inline EMKToken * reinturpretTokenAsKey(EMKToken *token) {
+    return [EMKToken tokenWithType:EMKRONKeyType value:token.sourceText sourceText:token.sourceText];
+}

@@ -36,20 +36,21 @@
 
 #pragma mark - types
 typedef enum : NSInteger {
+    EMKRONSentinalType      = 0,
     //Data types
-    EMKRONNumberType,
-    EMKRONNullType,
-    EMKRONBooleanType,
-    EMKRONStringType,
+    EMKRONNumberType        = 1 << 1,
+    EMKRONNullType          = 1 << 2,
+    EMKRONBooleanType       = 1 << 3,
+    EMKRONStringType        = 1 << 4,
     
     //Structural types (i.e. not data, but explicitly stated in the input stream)
-    EMKRONContextType,
-    EMKRONKeyType,
-    EMKRONPairDelimiterType,
+    EMKRONContextType       = 1 << 5,
+    EMKRONKeyType           = 1 << 6,
+    EMKRONPairDelimiterType = 1 << 7,
     
     //Pseudo/implied types
-    EMKRONArrayOpenType,
-    EMKRONArrayCloseType,
-    EMKRONObjectOpenType,
-    EMKRONObjectCloseType,
+    EMKRONArrayOpenType     = 1 << 8,
+    EMKRONArrayCloseType    = 1 << 9,
+    EMKRONObjectOpenType    = 1 << 10,
+    EMKRONObjectCloseType   = 1 << 11,
 }  EMKRONTypes;

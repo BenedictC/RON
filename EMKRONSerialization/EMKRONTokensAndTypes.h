@@ -45,7 +45,7 @@ typedef enum : NSInteger {
     
     //Structural types (i.e. not data, but explicitly stated in the input stream)
     EMKRONContextType       = 1 << 5,
-    EMKRONKeyType           = 1 << 6,
+    EMKRONKeyStringType     = 1 << 6,
     EMKRONPairDelimiterType = 1 << 7,
     
     //Pseudo/implied types
@@ -54,3 +54,6 @@ typedef enum : NSInteger {
     EMKRONObjectOpenType    = 1 << 10,
     EMKRONObjectCloseType   = 1 << 11,
 }  EMKRONTypes;
+
+const EMKRONTypes EMKRONKeyTypes = EMKRONKeyStringType | EMKRONStringType | EMKRONNullType | EMKRONBooleanType;
+

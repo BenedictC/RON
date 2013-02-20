@@ -40,5 +40,5 @@
 
 
 static inline EMKToken * reinturpretTokenAsKey(EMKToken *token) {
-    return [EMKToken tokenWithType:EMKRONKeyType value:token.sourceText sourceText:token.sourceText];
+    return [EMKToken tokenWithType:EMKRONKeyStringType value:token.sourceText sourceText:token.sourceText];
 }

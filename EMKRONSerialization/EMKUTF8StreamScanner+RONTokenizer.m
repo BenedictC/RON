@@ -582,10 +582,10 @@
     if (![self scanCharactersFromSet:[NSCharacterSet letterCharacterSet] intoString:&openingLetter]) return nil;
     
     NSString *body;
-    if (![self scanCharactersFromSet:[NSCharacterSet alphanumericCharacterSet] intoString:&body]) return [EMKToken tokenWithType:EMKRONKeyType value:openingLetter sourceText:openingLetter];
+    if (![self scanCharactersFromSet:[NSCharacterSet alphanumericCharacterSet] intoString:&body]) return [EMKToken tokenWithType:EMKRONKeyStringType value:openingLetter sourceText:openingLetter];
     
     NSString *result = [openingLetter stringByAppendingString:body];
-    return [EMKToken tokenWithType:EMKRONKeyType value:result sourceText:result];
+    return [EMKToken tokenWithType:EMKRONKeyStringType value:result sourceText:result];
 }
 
 

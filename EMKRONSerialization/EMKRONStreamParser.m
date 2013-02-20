@@ -116,7 +116,7 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
 
 
 
-#pragma mark - queue methods
+#pragma mark - token stream methods
 -(EMKToken *)consumeNextToken {
     EMKToken *token = [self lookAtNextToken];
     if (token != nil) {
@@ -131,7 +131,7 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
 //    
 //    //Structural types (i.e. not data, but explicitly stated in the input stream)
 //    (type == EMKRONContextType)       ? @"EMKRONContextType" :
-//    (type == EMKRONKeyType)           ? @"EMKRONKeyType" :
+//    (type == EMKRONKeyStringType)     ? @"EMKRONKeyStringType" :
 //    (type == EMKRONPairDelimiterType) ? @"EMKRONPairDelimiterType" :
 //    
 //    //Pseudo/implied types
@@ -172,7 +172,6 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
 
     while ([tokenQueue count] < length) {
         //TODO: Is the order of these is important? What's the correct order?
-
         if (storeToken([stream scanNumber])) continue;
         if (storeToken([stream scanNull])) continue;
         if (storeToken([stream scanBoolean])) continue;
@@ -193,10 +192,10 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
 
 
 
--(BOOL)matchTokens:(EMKRONTypes)tokenTypes, ... {
+-(BOOL)matchTokenStream:(EMKRONTypes)tokenStream, ... {
     va_list ap;    
-    va_start(ap, tokenTypes);
-    EMKRONTypes tokenType = tokenTypes;
+    va_start(ap, tokenStream);
+    EMKRONTypes tokenType = tokenStream;
     
     BOOL didMatch = NO;
     //Note that the exit condition is not related to tokenIndex. It's odd, but better than
@@ -235,7 +234,7 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
 
 
 -(id)parseScalar {    
-    if (![self matchTokens:EMKRONNumberType | EMKRONNullType | EMKRONBooleanType | EMKRONStringType, EMKRONSentinalType]) return nil;
+    if (![self matchTokenStream:EMKRONNumberType | EMKRONNullType | EMKRONBooleanType | EMKRONStringType, EMKRONSentinalType]) return nil;
     
     EMKToken *token = [self consumeNextToken];
     return token.value;
@@ -260,9 +259,8 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
 #pragma mark collection parsing
 -(NSDictionary *)parseObject {
     //check the stream is an object
-    if (![self matchTokens:EMKRONContextType, EMKRONKeyType,    EMKRONPairDelimiterType, EMKRONSentinalType] &&
-        ![self matchTokens:EMKRONContextType, EMKRONStringType, EMKRONPairDelimiterType, EMKRONSentinalType] &&
-        ![self matchTokens:EMKRONContextType, EMKRONPairDelimiterType, EMKRONSentinalType]) return nil;
+    if (![self matchTokenStream:EMKRONContextType, EMKRONKeyTypes, EMKRONPairDelimiterType, EMKRONSentinalType] &&
+        ![self matchTokenStream:EMKRONContextType, EMKRONPairDelimiterType, EMKRONSentinalType]) return nil;
 
     
     //From now on we throw an exception if the stream doesn't make sense
@@ -319,14 +317,13 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
     }
     
     //Is it an empty pair?
-    if ([self matchTokens:EMKRONPairDelimiterType, EMKRONSentinalType]) {
+    if ([self matchTokenStream:EMKRONPairDelimiterType, EMKRONSentinalType]) {
         [self consumeNextToken]; //consume the delimiter
         return YES;
     }
     
     //is the pair valid?
-    EMKRONTypes validKeyStringTypes = EMKRONKeyType | EMKRONStringType | EMKRONNullType | EMKRONBooleanType;
-    if (![self matchTokens:validKeyStringTypes, EMKRONPairDelimiterType, EMKRONSentinalType]) {
+    if (![self matchTokenStream:EMKRONKeyTypes, EMKRONPairDelimiterType, EMKRONSentinalType]) {
         //TODO: Figure out where the error is in the input stream.
         RAISE_PARSING_EXCEPTION(@"Expected key or pair delimiter but found ??? at <???>");
         return NO;
@@ -351,7 +348,7 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
 
 -(NSArray *)parseArray {
     //check the stream is an array
-    if (![self matchTokens:EMKRONContextType, EMKRONSentinalType]) return nil;
+    if (![self matchTokenStream:EMKRONContextType, EMKRONSentinalType]) return nil;
     
     //From now on we throw an exception if the stream doesn't make sense
     NSMutableArray *array = [NSMutableArray array];
@@ -407,12 +404,9 @@ static NSString * const EMKRONParsingException = @"EMKRONParsingException";
             break;
     }
     
-    //TODO: Check for empty
-    //If the next token is a parent context then this element is empty
+    //If the next token is a parent context then this element is empty 
     EMKToken *possibleParentContext = [self lookAtNextToken];
-    if (EMKRONContextTokenIsParent == compareContextTokens(contextToken, possibleParentContext)) {
-        return YES;
-    }
+    if (EMKRONContextTokenIsParent == compareContextTokens(contextToken, possibleParentContext)) return YES;
 
     //It's a normal element
     id value = [self parseValue];
